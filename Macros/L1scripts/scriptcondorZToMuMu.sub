@@ -1,13 +1,16 @@
 # Files
 executable = scriptcondor.sh
-output = outputcondorZToMuMu/log/scriptcondor_$(Process).out
-error = outputcondorZToMuMu/log/scriptcondor_$(Process).err
-log = outputcondorZToMuMu/log/scriptcondor_$(Process).log
+#output = outputcondorZToMuMu/log/scriptcondor_$(Process).out
+#error = outputcondorZToMuMu/log/scriptcondor_$(Process).err
+#log = outputcondorZToMuMu/log/scriptcondor_$(Process).log
+output = outputcondorZToMuMu_MC/log/scriptcondor_$(Process).out
+error = outputcondorZToMuMu_MC/log/scriptcondor_$(Process).err
+log = outputcondorZToMuMu_MC/log/scriptcondor_$(Process).log
 #arguments    = $(Process)
 
 
 transfer_input_files = $(filename)
-arguments            = $(filename)  outputcondorZToMuMu/output_$(Process).root ZToMuMu
+arguments            = $(filename)  outputcondorZToMuMu_MC/output_$(Process).root ZToMuMu
 
 
 
@@ -29,7 +32,11 @@ request_disk   = 100MB
 # Run job
 #queue filename matching files /pnfs/iihe/cms/store/user/lathomas/Muon/Run2022C_PromptReco_v1_DataRun3_L1Study_SingleMuforJME/220822_150627/0000/output_*.root /pnfs/iihe/cms/store/user/lathomas/SingleMuon/Run2022C_PromptReco_v1_DataRun3_L1Study_SingleMuforJME/220817_075727/0000/output_*.root
 
-queue filename matching files /pnfs/iihe/cms/store/user/lathomas/*Muon*/*_PromptReco_v*_DataRun3_L1Study_ZToMuMu/220909*/*/*.root
+# default files:
+#queue filename matching files /pnfs/iihe/cms/store/user/lathomas/*Muon*/*_PromptReco_v*_DataRun3_L1Study_ZToMuMu/220909*/*/*.root
+
+# Monte Carlo events:
+queue filename matching files /pnfs/iihe/cms/store/user/lathomas/DYJetsToLL_M-50_TuneCP5_13p6TeV-madgraphMLM-pythia8/Run3Winter22MiniAOD_122X_mcRun3_2021_realistic_v9_ext1_v1_DataRun3_L1Study_ZToMuMu/220913_202809/0000/*.root
 
 #queue filename matching files /pnfs/iihe/cms/store/user/lathomas/SingleMuon/Run2022B_PromptReco_v1_DataRun3_L1Study_SingleMuforJME/220908_123342/0000/*.root
 #queue 100 
