@@ -1,19 +1,26 @@
 #!/bin/bash
+# dataset name input
 thedataset=$1
+# extract campaingntag from thedataset
 campaigntag=`echo $thedataset | sed -e 's/.*\/\(.*\)\/MINIAOD.*/\1/'`
 campaigntag=`echo $campaigntag | sed -e 's/[-]/\_/g'`
+# replace special characters with all caps name of that character
 thedataset=`echo $1 | sed -e 's/[-]/HYPHEN/g'`
 thedataset=`echo $thedataset | sed -e 's/\//SLASH/g'`
 thedataset=`echo $thedataset | sed -e 's/\_/UNDERSCORE/g'`
+# number of jobs to submit ?
 njobs=$3
+
 skim=$4
 
 
 therequestname=$2
 
 
+# Set ISMC to true if thedataset contains AODSIM
 ISMC="True"
 echo "$thedataset" | grep "AODSIM" && ISMC="True" || ISMC="False"
+# Set ISFS to true if thedataset contains Fast
 ISFS="False"
 echo "$thedataset" | grep "Fast" && ISFS="True" || ISFS="False"
 

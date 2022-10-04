@@ -1,0 +1,5 @@
+Macros/L1scripts/Events
+Macros/L1scripts/MC
+JMEAnalyzer/python/crabworkarea_*
+**/__pycache__/
+**/*.root

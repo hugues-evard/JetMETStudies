@@ -2,7 +2,7 @@ from CRABClient.UserUtilities import config
 config = config()
 
 config.General.requestName = 'THEREQUESTNAME'
-config.General.workArea = 'crabworkarea_9sep2022_pnfs_bugfix'
+config.General.workArea = 'crabworkarea_04oct2022_pnfs_bugfix'
 config.General.transferOutputs = True
 config.General.transferLogs = True
 
@@ -25,7 +25,8 @@ config.JobType.inputFiles = [
 'Cert_271036-284044_13TeV_ReReco_07Aug2017_Collisions16_JSON.txt',
 'RochesterCorrections',
 'UnprefireableEventList',
-'Cert_Fill7733.txt'
+#'Cert_Fill7733.txt',
+'Cert_Collisions2016to2022_273158_357900_Golden.json'
 ]
 #You may need to add .db file to the list above if you fetch JECs from there instead of global tag 
 #Make sure all the needed files are included. For example, running on UL, you should add files such as Summer19UL17_JRV2_DATA.db Summer19UL17_RunF_V5_DATA.db
@@ -39,7 +40,8 @@ config.Data.allowNonValidInputDataset = True
 
 config.Data.publication = True
 config.Data.outputDatasetTag = 'CAMPAIGN_RUNERA_THESKIM'
-config.Data.lumiMask = 'Cert_Collisions2022_355100_357900_Golden.json'
+#config.Data.lumiMask = 'Cert_Collisions2022_355100_357900_Golden.json'
+#config.Data.lumiMask = 'Cert_Collisions2016to2022_273158_357900_Golden.json'
 #config.Data.outLFNDirBase = '/store/group/dpg_trigger/comm_trigger/L1Trigger/lathomas/Run3Commissioning'
 #config.Site.storageSite = 'T2_CH_CERN'
 

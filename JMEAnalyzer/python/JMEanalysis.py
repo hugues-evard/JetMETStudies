@@ -567,7 +567,9 @@ if "Data2017" in runEra:
 if "Data2016" in runEra or "DataUL2016" in runEra:
     JSONfile = 'Cert_271036-284044_13TeV_ReReco_07Aug2017_Collisions16_JSON.txt'
 if "DataRun3" in runEra:
-    JSONfile = 'Cert_Collisions2022_355100_357900_Golden.json' 
+    #JSONfile = 'Cert_Collisions2022_355100_357900_Golden.json' 
+    JSONfile = 'Cert_Collisions2016to2022_273158_357900_Golden.json' 
+    #JSONfile = 'JMEAnalyzer/python/Cert_Collisions2016to2022_273158_357900_Golden.json' 
 
 myLumis = LumiList.LumiList(filename = JSONfile).getCMSSWString().split(',')
 if not ISMC:
