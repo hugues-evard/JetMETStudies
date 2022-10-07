@@ -250,6 +250,10 @@ def ZEE_Plots(df):
             histos['L1EG15to26_bx0_etaphi'] = df_eg[i].Histo2D(ROOT.RDF.TH2DModel('L1EG15to26_bx0_etaphi', '', 100, -5,5, 100, -3.1416, 3.1416), 'probeL1EG15to26Bx0_Eta', 'probeL1EG15to26Bx0_Phi')
             histos['L1EG15to26_bxplus1_etaphi'] = df_eg[i].Histo2D(ROOT.RDF.TH2DModel('L1EG15to26_bxplus1_etaphi', '', 100, -5,5, 100, -3.1416, 3.1416), 'probeL1EG15to26Bxplus1_Eta', 'probeL1EG15to26Bxplus1_Phi')
 
+            histos['L1EG15to26_bxmin1_eta'] = df_eg[i].Histo1D(ROOT.RDF.TH1DModel('L1EG15to26_bxmin1_eta', '', 100, -5, 5), 'probeL1EG15to26Bxmin1_Eta')
+            histos['L1EG15to26_bx0_eta'] = df_eg[i].Histo1D(ROOT.RDF.TH1DModel('L1EG15to26_bx0_eta', '', 100, -5, 5), 'probeL1EG15to26Bx0_Eta')
+            histos['L1EG15to26_bxplus1_eta'] = df_eg[i].Histo1D(ROOT.RDF.TH1DModel('L1EG15to26_bxplus1_eta', '', 100, -5, 5), 'probeL1EG15to26Bxplus1_Eta')
+
     return df, histos
     
 
@@ -300,6 +304,9 @@ def ZMuMu_Plots(df):
             histos['L1Mu10to21_bx0_etaphi'] = df_mu[i].Histo2D(ROOT.RDF.TH2DModel('L1Mu10to21_bx0_etaphi', '', 100, -5,5, 100, -3.1416, 3.1416), 'probeL1Mu10to21Bx0_Eta', 'probeL1Mu10to21Bx0_Phi')
             histos['L1Mu10to21_bxplus1_etaphi'] = df_mu[i].Histo2D(ROOT.RDF.TH2DModel('L1Mu10to21_bxplus1_etaphi', '', 100, -5,5, 100, -3.1416, 3.1416), 'probeL1Mu10to21Bxplus1_Eta', 'probeL1Mu10to21Bxplus1_Phi')
 
+            histos['L1Mu10to21_bxmin1_eta'] = df_mu[i].Histo1D(ROOT.RDF.TH1DModel('L1Mu10to21_bxmin1_eta', '', 100, -5, 5), 'probeL1Mu10to21Bxmin1_Eta')
+            histos['L1Mu10to21_bx0_eta'] = df_mu[i].Histo1D(ROOT.RDF.TH1DModel('L1Mu10to21_bx0_eta', '', 100, -5, 5), 'probeL1Mu10to21Bx0_Eta')
+            histos['L1Mu10to21_bxplus1_eta'] = df_mu[i].Histo1D(ROOT.RDF.TH1DModel('L1Mu10to21_bxplus1_eta', '', 100, -5, 5), 'probeL1Mu10to21Bxplus1_Eta')
     return df, histos
     
 
@@ -410,6 +417,9 @@ def AnalyzeCleanJets(df, JetRecoPtCut, L1JetPtCut):
     histos['L1Jet100to150_bx0_etaphi'] = df.Histo2D(ROOT.RDF.TH2DModel('L1Jet100to150_bx0_etaphi', '', 100, -5,5, 100, -3.1416, 3.1416), 'probeL1Jet100to150Bx0_Eta', 'probeL1Jet100to150Bx0_Phi')
     histos['L1Jet100to150_bxplus1_etaphi'] = df.Histo2D(ROOT.RDF.TH2DModel('L1Jet100to150_bxplus1_etaphi', '', 100, -5,5, 100, -3.1416, 3.1416), 'probeL1Jet100to150Bxplus1_Eta', 'probeL1Jet100to150Bxplus1_Phi')
 
+    histos['L1Jet100to150_bxmin1_eta'] = df[i].Histo1D(ROOT.RDF.TH1DModel('L1Jet100to150_bxmin1_eta', '', 100, -5, 5), 'probeL1Jet100to150Bxmin1_Eta')
+    histos['L1Jet100to150_bx0_eta'] = df[i].Histo1D(ROOT.RDF.TH1DModel('L1Jet100to150_bx0_eta', '', 100, -5, 5), 'probeL1Jet100to150Bx0_Eta')
+    histos['L1Jet100to150_bxplus1_eta'] = df[i].Histo1D(ROOT.RDF.TH1DModel('L1Jet100to150_bxplus1_eta', '', 100, -5, 5), 'probeL1Jet100to150Bxplus1_Eta')
 
 
     return df, histos

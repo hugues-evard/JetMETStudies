@@ -7,8 +7,8 @@ TheSkim = "L1Unprefirable"
 TheSkim = "ZJetsResiduals"
 TheSkim = "MCJECs"
 TheSkim = "L1Study"
-TheSkim = "L1Study_ZToMuMu"
-#TheSkim = "L1Study_ZToEE"
+#TheSkim = "L1Study_ZToMuMu"
+TheSkim = "L1Study_ZToEE"
 #TheSkim = "L1Study_SingleMuforJME"
 ReclusterCHSJets = False
 ReclusterGenJets = False
@@ -69,7 +69,8 @@ process.source = cms.Source("PoolSource",
 #'file:/user/lathomas/Run3DQM/CMSSW_12_3_4_patch2/src/JetMETStudies/JMEAnalyzer/python/files2022/0634e291-f4b1-49fc-a542-dde43480831a.root'
 #'/store/data/Run2022C/EGamma/MINIAOD/PromptReco-v1/000/356/071/00000/861766b9-f568-4c74-96be-9a3d037b087d.root'
 #'/store/mc/Run3Winter22MiniAOD/DYJetsToLL_M-50_TuneCP5_13p6TeV-madgraphMLM-pythia8/MINIAODSIM/122X_mcRun3_2021_realistic_v9_ext1-v1/2830000/006d687f-44da-49f0-b0c0-f46b8600731f.root'
-'file:/pnfs/iihe/cms/ph/sc4/store/data/Run2022E/Muon/MINIAOD/PromptReco-v1/000/359/686/00000/03a9cd9f-f2a9-4b20-93e2-69ec754c94d4.root'
+#'file:/pnfs/iihe/cms/ph/sc4/store/data/Run2022E/Muon/MINIAOD/PromptReco-v1/000/359/686/00000/03a9cd9f-f2a9-4b20-93e2-69ec754c94d4.root'
+'file:/pnfs/iihe/cms/ph/sc4/store/data/Run2022E/EGamma/MINIAOD/PromptReco-v1/000/359/806/00000/1824aedf-1104-4f76-8f27-5b7856e192ce.root'
 #'file:MINIAODRun3.root'
 #'/store/data/Run2022C/SingleMuon/MINIAOD/PromptReco-v1/000/356/071/00000/40fbb456-859b-4f95-880a-15491af226fe.root'
 #'/store/data/Run2022C/SingleMuon/MINIAOD/PromptReco-v1/000/356/071/00000/41ea401b-9ada-4481-b948-9c831fcafeb3.root',

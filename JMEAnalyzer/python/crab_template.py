@@ -2,7 +2,7 @@ from CRABClient.UserUtilities import config
 config = config()
 
 config.General.requestName = 'THEREQUESTNAME'
-config.General.workArea = 'crabworkarea_06oct2022_pnfs_bugfix'
+config.General.workArea = 'crabworkarea_07oct2022_pnfs_bugfix'
 config.General.transferOutputs = True
 config.General.transferLogs = True
 
