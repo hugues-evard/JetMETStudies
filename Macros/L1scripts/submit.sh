@@ -2,6 +2,7 @@
 
 # usage: ./submit.sh channel "input" output
 # input has to be in quotes to not automaticly expand when using wildcards
+# channel can be ZToMuMu ZToEE MuonJet or PhotonJet
 
 channel=$1
 input=$2

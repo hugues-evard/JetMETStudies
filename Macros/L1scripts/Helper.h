@@ -35,7 +35,43 @@ vector<int> FindL1ObjIdx(ROOT::VecOps::RVec<float>L1Obj_eta, ROOT::VecOps::RVec<
   return result;
 }
 
+// vérifier que les muons du bx-1 qui sont dupliqués dans le bx0
+// apparaissent biens dans le numératuer pour bx-1
 
+vector<int> FindL1ObjIdx_setBx(
+        ROOT::VecOps::RVec<float>L1Obj_eta,
+        ROOT::VecOps::RVec<float>L1Obj_phi,
+        ROOT::VecOps::RVec<float>L1Obj_bx,
+        ROOT::VecOps::RVec<float>recoObj_Eta,
+        ROOT::VecOps::RVec<float>recoObj_Phi,
+        int bx,
+        ROOT::VecOps::RVec<int>L1Obj_CutVar={},
+        int CutVar=-1
+        ){
+  vector <int> result={};
+  for(unsigned int i = 0; i<recoObj_Eta.size(); i++){
+    double drmin = 0.4; 
+    int idx = -1;
+    for(unsigned int j = 0; j<L1Obj_eta.size(); j++){
+
+      if(L1Obj_CutVar.size()==L1Obj_eta.size()){
+	if(L1Obj_CutVar[j]<CutVar)continue;
+      }
+      if(L1Obj_bx[j] != bx){
+          continue;
+      }
+      double deta = abs(recoObj_Eta[i]-L1Obj_eta[j]);
+      double dphi = abs(acos(cos(recoObj_Phi[i]-L1Obj_phi[j]))); 
+      double dr = sqrt(deta*deta+dphi*dphi);
+      if(dr<=drmin){ 
+	drmin = dr; 
+	idx = j;
+      }
+    }
+    result.push_back(idx);
+  }
+  return result;
+}
 
 ROOT::VecOps::RVec<float> GetVal(ROOT::VecOps::RVec<int>idxL1Obj, ROOT::VecOps::RVec<float>L1Obj_val){
   ROOT::VecOps::RVec<float> result ={}; 
