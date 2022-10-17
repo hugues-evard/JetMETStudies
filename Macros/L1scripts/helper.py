@@ -316,6 +316,7 @@ def ZMuMu_Plots(df):
         
         
         if i== 2:
+            """
             df_mu[i] = df_mu[i].Define('probeL1Mu10to21Bxmin1_Eta',
                     'probe_Eta[probe_Pt>8&&probe_Pt<25&&probe_L1Pt>10&&probe_L1Pt<=21&&probe_L1Bx==-1&&probe_L1Qual>=12]')
             df_mu[i] = df_mu[i].Define('probeL1Mu10to21Bxmin1_Phi',
@@ -328,6 +329,20 @@ def ZMuMu_Plots(df):
                     'probe_Eta[probe_Pt>8&&probe_Pt<25&&probe_L1Pt>10&&probe_L1Pt<=21&&probe_L1Bx==1&&probe_L1Qual>=12]')
             df_mu[i] = df_mu[i].Define('probeL1Mu10to21Bxplus1_Phi',
                     'probe_Phi[probe_Pt>8&&probe_Pt<25&&probe_L1Pt>10&&probe_L1Pt<=21&&probe_L1Bx==1&&probe_L1Qual>=12]')
+            """
+
+            df_mu[i] = df_mu[i].Define('probeL1Mu10to21Bxmin1_Eta',
+                    'probe_Eta[probe_Pt>8&&probe_Pt<25&&probe_L1Pt_Bxmin1>10&&probe_L1Pt_Bxmin1<=21&&probe_L1Qual>=12]')
+            df_mu[i] = df_mu[i].Define('probeL1Mu10to21Bxmin1_Phi',
+                    'probe_Phi[probe_Pt>8&&probe_Pt<25&&probe_L1Pt_Bxmin1>10&&probe_L1Pt_Bxmin1<=21&&probe_L1Qual>=12]')
+            df_mu[i] = df_mu[i].Define('probeL1Mu10to21Bx0_Eta',
+                    'probe_Eta[probe_Pt>8&&probe_Pt<25&&probe_L1Pt_Bx0>10&&probe_L1Pt_Bx0<=21&&probe_L1Qual>=12]')
+            df_mu[i] = df_mu[i].Define('probeL1Mu10to21Bx0_Phi',
+                    'probe_Phi[probe_Pt>8&&probe_Pt<25&&probe_L1Pt_Bx0>10&&probe_L1Pt_Bx0<=21&&probe_L1Qual>=12]')
+            df_mu[i] = df_mu[i].Define('probeL1Mu10to21Bxplus1_Eta',
+                    'probe_Eta[probe_Pt>8&&probe_Pt<25&&probe_L1Pt_Bxplus1>10&&probe_L1Pt_Bxplus1<=21&&probe_L1Qual>=12]')
+            df_mu[i] = df_mu[i].Define('probeL1Mu10to21Bxplus1_Phi',
+                    'probe_Phi[probe_Pt>8&&probe_Pt<25&&probe_L1Pt_Bxplus1>10&&probe_L1Pt_Bxplus1<=21&&probe_L1Qual>=12]')
             
             df_mu[i] = df_mu[i].Define('probeL1Mu22Bxmin1_Eta',
                     'probe_Eta[probe_Pt>8&&probe_Pt<25&&probe_L1Pt_Bxmin1>22&&probe_L1Qual>=12]')
