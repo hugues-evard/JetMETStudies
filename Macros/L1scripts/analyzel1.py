@@ -47,6 +47,10 @@ def main():
 
 
     df = ROOT.RDataFrame('jmeanalyzer/tree', inputFile)
+
+    # filter events with run >= 359924
+    #df = df.Filter("_runNb>=359924")
+
     nEvents = df.Count().GetValue()
     print('There are {} events'.format(nEvents))
     
@@ -57,6 +61,8 @@ def main():
     df = df.Filter('if(tdfentry_ %100000 == 0) {cout << "Event is  " << tdfentry_ << endl;} return true;')
 
     df = df.Filter('Flag_HBHENoiseFilter&&Flag_HBHENoiseIsoFilter&&Flag_goodVertices&&Flag_EcalDeadCellTriggerPrimitiveFilter&&Flag_BadPFMuonFilter&&Flag_BadPFMuonDzFilter')
+
+    nbbins, runmin, runmax = RunNbLimits(df)
     
     if args.outputFile == '':
         args.outputFile = 'output_'+args.channel+'.root'
@@ -72,15 +78,15 @@ def main():
         
         df = CleanJets(df)
         
-        df, histos_jets = AnalyzeCleanJets(df, 200, 100) 
+        df, histos_jets = AnalyzeCleanJets(df, 200, 100, nbbins, runmin, runmax) 
         
         df = PtBalanceSelection(df)
         
-        df, histos_balance = AnalyzePtBalance(df)
+        df, histos_balance = AnalyzePtBalance(df, nbbins, runmin, runmax)
         
         df_report = df.Report()
         
-        df, histos_hf = HFNoiseStudy(df)
+        df, histos_hf = HFNoiseStudy(df, nbbins, runmin, runmax)
         #Selection is over. Now do some plotting
         
         for i in histos_jets:
@@ -100,7 +106,7 @@ def main():
         
         df = CleanJets(df)
         
-        df, histos_jets = AnalyzeCleanJets(df, 100, 50) 
+        df, histos_jets = AnalyzeCleanJets(df, 100, 50, nbbins, runmin, runmax) 
         
         df, histos_sum = EtSum(df)
         
@@ -118,14 +124,14 @@ def main():
 
     if args.channel == 'ZToEE':
         df = ZEE_EleSelection(df)
-        df, histos = ZEE_Plots(df)
+        df, histos = ZEE_Plots(df, nbbins, runmin, runmax)
         
         for i in histos:
             histos[i].GetValue().Write()
 
     if args.channel == 'ZToMuMu':
         df = ZMuMu_MuSelection(df)
-        df, histos = ZMuMu_Plots(df)
+        df, histos = ZMuMu_Plots(df, nbbins, runmin, runmax)
 
         for i in histos:
             histos[i].GetValue().Write()

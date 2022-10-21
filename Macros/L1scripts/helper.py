@@ -166,7 +166,7 @@ def ZMuMu_MuSelection(df):
 
     
 
-def makehistosforturnons_inprobeetaranges(df, histos, etavarname, phivarname, ptvarname, responsevarname, etabins, l1varname, l1thresholds, prefix, binning, l1thresholdforeffvsrunnb, offlinethresholdforeffvsrunnb):
+def makehistosforturnons_inprobeetaranges(df, histos, etavarname, phivarname, ptvarname, responsevarname, etabins, l1varname, l1thresholds, prefix, binning, l1thresholdforeffvsrunnb, offlinethresholdforeffvsrunnb, nbbins, runmin, runmax):
     '''Make histos for turnons vs pt (1D histos for numerator and denominator) in ranges of eta
     Also look at response vs run number (2D histo) '''
     for i in range(len(etabins)-1):
@@ -180,7 +180,10 @@ def makehistosforturnons_inprobeetaranges(df, histos, etavarname, phivarname, pt
         #Response vs pt and vs runnb (2d)
         histos[prefix+str_bineta] = df_etarange.Histo1D(ROOT.RDF.TH1DModel('h_{}_{}'.format(prefix, str_bineta), '', len(binning)-1, binning), 'denominator_pt')
         histos[prefix+str_bineta+'_ResponseVsPt'] = df_etarange.Histo2D(ROOT.RDF.TH2DModel('h_ResponseVsPt_{}_{}'.format(prefix, str_bineta), '', 200, 0, 200, 100, 0, 2), 'denominator_pt', 'response')
-        histos[prefix+str_bineta+'_ResponseVsRunNb'] = df_etarange.Histo2D(ROOT.RDF.TH2DModel('h_ResponseVsRunNb_{}_{}'.format(prefix, str_bineta), '', 5000, 355000, 360000, 100, 0 , 2), 'runnb', 'response')
+        histos[prefix+str_bineta+'_ResponseVsRunNb'] = df_etarange.Histo2D(
+                ROOT.RDF.TH2DModel('h_ResponseVsRunNb_{}_{}'.format(prefix, str_bineta), 
+                    '', nbbins, runmin, runmax, 100, 0 , 2), 
+                'runnb', 'response')
 
         if i ==1 and prefix == 'EGNonIso_plots':
             df_etarange = df_etarange.Filter(stringToPrint)
@@ -193,8 +196,17 @@ def makehistosforturnons_inprobeetaranges(df, histos, etavarname, phivarname, pt
         df_etarange = df_etarange.Define('inplateaupassL1','inplateau && {}>={}'.format(l1varname,l1thresholdforeffvsrunnb))
         df_etarange = df_etarange.Define('N_inplateaupassL1','Sum(inplateaupassL1)')
         df_etarange = df_etarange.Define('runnb_inplateaupassL1',"return ROOT::VecOps::RVec<int>(N_inplateaupassL1, _runNb);")
-        histos[prefix+"_plateaueffvsrunnb_numerator_"+str_bineta] = df_etarange.Histo1D(ROOT.RDF.TH1DModel('h_PlateauEffVsRunNb_Numerator_{}_{}'.format(prefix, str_bineta), '', 5000, 355000, 360000),'runnb_inplateaupassL1')
-        histos[prefix+"_plateaueffvsrunnb_denominator_"+str_bineta] = df_etarange.Histo1D(ROOT.RDF.TH1DModel('h_PlateauEffVsRunNb_Denominator_{}_{}'.format(prefix, str_bineta), '', 5000, 355000, 360000),'runnb_inplateau')
+
+        histos[prefix+"_plateaueffvsrunnb_numerator_"+str_bineta] = df_etarange.Histo1D(
+                ROOT.RDF.TH1DModel(
+                    'h_PlateauEffVsRunNb_Numerator_{}_{}'.format(prefix, str_bineta), 
+                    '', nbbins, runmin, runmax),
+                'runnb_inplateaupassL1')
+        histos[prefix+"_plateaueffvsrunnb_denominator_"+str_bineta] = df_etarange.Histo1D(
+                ROOT.RDF.TH1DModel(
+                    'h_PlateauEffVsRunNb_Denominator_{}_{}'.format(prefix, str_bineta),
+                    '', nbbins, runmin, runmax),
+                'runnb_inplateau')
 
         for ipt in l1thresholds:
             str_binetapt = "eta{}to{}_l1thrgeq{}".format(etabins[i], etabins[i+1],ipt).replace(".","p")
@@ -208,7 +220,7 @@ def makehistosforturnons_inprobeetaranges(df, histos, etavarname, phivarname, pt
 
     
 
-def ZEE_Plots(df):
+def ZEE_Plots(df, nbbins, runmin, runmax):
     histos = {}
     
     label = ['EGNonIso','EGLooseIso', 'EGTightIso']
@@ -217,16 +229,34 @@ def ZEE_Plots(df):
         
         if i ==0:
             df_eg[i] = df.Define('probe_idxL1jet','FindL1ObjIdx(_L1eg_eta, _L1eg_phi, probe_Eta, probe_Phi)')
+            df_eg[i] = df_eg[i].Define('probe_idxL1jet_Bx0','FindL1ObjIdx_setBx(_L1eg_eta, _L1eg_phi, _L1eg_bx, probe_Eta, probe_Phi, 0)')
+            df_eg[i] = df_eg[i].Define('probe_idxL1jet_Bxmin1','FindL1ObjIdx_setBx(_L1eg_eta, _L1eg_phi, _L1eg_bx, probe_Eta, probe_Phi, -1)')
+            df_eg[i] = df_eg[i].Define('probe_idxL1jet_Bxplus1','FindL1ObjIdx_setBx(_L1eg_eta, _L1eg_phi, _L1eg_bx, probe_Eta, probe_Phi, 1)')
         if i ==1:
             df_eg[i] = df.Define('probe_idxL1jet','FindL1ObjIdx(_L1eg_eta, _L1eg_phi, probe_Eta, probe_Phi, _L1eg_iso, 2)')
+            df_eg[i] = df_eg[i].Define('probe_idxL1jet_Bx0','FindL1ObjIdx_setBx(_L1eg_eta, _L1eg_phi, _L1eg_bx, probe_Eta, probe_Phi, 0, _L1eg_iso, 2)')
+            df_eg[i] = df_eg[i].Define('probe_idxL1jet_Bxmin1','FindL1ObjIdx_setBx(_L1eg_eta, _L1eg_phi, _L1eg_bx, probe_Eta, probe_Phi, -1, _L1eg_iso, 2)')
+            df_eg[i] = df_eg[i].Define('probe_idxL1jet_Bxplus1','FindL1ObjIdx_setBx(_L1eg_eta, _L1eg_phi, _L1eg_bx, probe_Eta, probe_Phi, 1, _L1eg_iso, 2)')
         if i ==2:
             df_eg[i] = df.Define('probe_idxL1jet','FindL1ObjIdx(_L1eg_eta, _L1eg_phi, probe_Eta, probe_Phi, _L1eg_iso, 3)')
+            df_eg[i] = df_eg[i].Define('probe_idxL1jet_Bx0','FindL1ObjIdx_setBx(_L1eg_eta, _L1eg_phi, _L1eg_bx, probe_Eta, probe_Phi, 0, _L1eg_iso, 3)')
+            df_eg[i] = df_eg[i].Define('probe_idxL1jet_Bxmin1','FindL1ObjIdx_setBx(_L1eg_eta, _L1eg_phi, _L1eg_bx, probe_Eta, probe_Phi, -1, _L1eg_iso, 3)')
+            df_eg[i] = df_eg[i].Define('probe_idxL1jet_Bxplus1','FindL1ObjIdx_setBx(_L1eg_eta, _L1eg_phi, _L1eg_bx, probe_Eta, probe_Phi, 1, _L1eg_iso, 3)')
 
         df_eg[i] = df_eg[i].Define('probe_L1Pt','GetVal(probe_idxL1jet, _L1eg_pt)')
         df_eg[i] = df_eg[i].Define('probe_L1Bx','GetVal(probe_idxL1jet, _L1eg_bx)')
         df_eg[i] = df_eg[i].Define('probe_L1PtoverRecoPt','probe_L1Pt/probe_Pt')
+
+        df_eg[i] = df_eg[i].Define('probe_L1Pt_Bx0',
+                'GetVal(probe_idxL1jet_Bx0, _L1eg_pt)')
+
+        df_eg[i] = df_eg[i].Define('probe_L1Pt_Bxmin1',
+                'GetVal(probe_idxL1jet_Bxmin1, _L1eg_pt)')
+
+        df_eg[i] = df_eg[i].Define('probe_L1Pt_Bxplus1',
+                'GetVal(probe_idxL1jet_Bxplus1, _L1eg_pt)')
         
-        df_eg[i] = makehistosforturnons_inprobeetaranges(df_eg[i], histos, etavarname='probe_Eta', phivarname='probe_Phi', ptvarname='probe_Pt', responsevarname='probe_L1PtoverRecoPt', etabins=egEtaBins, l1varname='probe_L1Pt', l1thresholds=[5,10,15,20,25,30,35], prefix=label[i]+"_plots", binning=leptonpt_bins, l1thresholdforeffvsrunnb = 30, offlinethresholdforeffvsrunnb = 35 )
+        df_eg[i] = makehistosforturnons_inprobeetaranges(df_eg[i], histos, etavarname='probe_Eta', phivarname='probe_Phi', ptvarname='probe_Pt', responsevarname='probe_L1PtoverRecoPt', etabins=egEtaBins, l1varname='probe_L1Pt', l1thresholds=[5,10,15,20,25,30,35], prefix=label[i]+"_plots", binning=leptonpt_bins, l1thresholdforeffvsrunnb = 30, offlinethresholdforeffvsrunnb = 35, nbbins = nbbins, runmin = runmin, nunmax = runmax)
         
         
         df_eg[i] = df_eg[i].Define('probePt30_Eta','probe_Eta[probe_Pt>30]')
@@ -238,12 +268,27 @@ def ZEE_Plots(df):
 
         
         if i ==0:
+            """
             df_eg[i] = df_eg[i].Define('probeL1EG15to26Bxmin1_Eta','probe_Eta[probe_Pt>12&&probe_Pt<23&&probe_L1Pt>15&&probe_L1Pt<=26&&probe_L1Bx==-1]')
             df_eg[i] = df_eg[i].Define('probeL1EG15to26Bxmin1_Phi','probe_Phi[probe_Pt>12&&probe_Pt<23&&probe_L1Pt>15&&probe_L1Pt<=26&&probe_L1Bx==-1]')
             df_eg[i] = df_eg[i].Define('probeL1EG15to26Bx0_Eta','probe_Eta[probe_Pt>12&&probe_Pt<23&&probe_L1Pt>15&&probe_L1Pt<=26&&probe_L1Bx==0]')
             df_eg[i] = df_eg[i].Define('probeL1EG15to26Bx0_Phi','probe_Phi[probe_Pt>12&&probe_Pt<23&&probe_L1Pt>15&&probe_L1Pt<=26&&probe_L1Bx==0]')
             df_eg[i] = df_eg[i].Define('probeL1EG15to26Bxplus1_Eta','probe_Eta[probe_Pt>12&&probe_Pt<23&&probe_L1Pt>15&&probe_L1Pt<=26&&probe_L1Bx==1]')
             df_eg[i] = df_eg[i].Define('probeL1EG15to26Bxplus1_Phi','probe_Phi[probe_Pt>12&&probe_Pt<23&&probe_L1Pt>15&&probe_L1Pt<=26&&probe_L1Bx==1]')
+            """
+
+            df_eg[i] = df_eg[i].Define('probeL1EG15to26Bxmin1_Eta',
+                    'probe_Eta[probe_Pt>12&&probe_Pt<23&&probe_L1Pt_Bxmin1>15&&probe_L1Pt_Bxmin1<=26&&probe_L1Bx==-1]')
+            df_eg[i] = df_eg[i].Define('probeL1EG15to26Bxmin1_Phi',
+                    'probe_Phi[probe_Pt>12&&probe_Pt<23&&probe_L1Pt_Bxmin1>15&&probe_L1Pt_Bxmin1<=26&&probe_L1Bx==-1]')
+            df_eg[i] = df_eg[i].Define('probeL1EG15to26Bx0_Eta',
+                    'probe_Eta[probe_Pt>12&&probe_Pt<23&&probe_L1Pt_Bx0>15&&probe_L1Pt_Bx0<=26&&probe_L1Bx==0]')
+            df_eg[i] = df_eg[i].Define('probeL1EG15to26Bx0_Phi',
+                    'probe_Phi[probe_Pt>12&&probe_Pt<23&&probe_L1Pt_Bx0>15&&probe_L1Pt_Bx0<=26&&probe_L1Bx==0]')
+            df_eg[i] = df_eg[i].Define('probeL1EG15to26Bxplus1_Eta',
+                    'probe_Eta[probe_Pt>12&&probe_Pt<23&&probe_L1Pt_Bxplus1>15&&probe_L1Pt_Bxplus1<=26&&probe_L1Bx==1]')
+            df_eg[i] = df_eg[i].Define('probeL1EG15to26Bxplus1_Phi',
+                    'probe_Phi[probe_Pt>12&&probe_Pt<23&&probe_L1Pt_Bxplus1>15&&probe_L1Pt_Bxplus1<=26&&probe_L1Bx==1]')
             
             
             histos['L1EG15to26_bxmin1_etaphi'] = df_eg[i].Histo2D(ROOT.RDF.TH2DModel('L1EG15to26_bxmin1_etaphi', '', 100, -5,5, 100, -3.1416, 3.1416), 'probeL1EG15to26Bxmin1_Eta', 'probeL1EG15to26Bxmin1_Phi')
@@ -258,7 +303,7 @@ def ZEE_Plots(df):
     
 
 
-def ZMuMu_Plots(df):
+def ZMuMu_Plots(df, nbbins, runmin, runmax):
                                                                                           
     histos = {}
     label = ['AllQual', 'Qual8', 'Qual12']
@@ -304,7 +349,7 @@ def ZMuMu_Plots(df):
 
         df_mu[i] = df_mu[i].Define('probe_L1PtoverRecoPt','probe_L1Pt/probe_Pt')
         
-        df_mu[i] = makehistosforturnons_inprobeetaranges(df_mu[i], histos, etavarname='probe_Eta', phivarname='probe_Phi', ptvarname='probe_Pt', responsevarname='probe_L1PtoverRecoPt', etabins=muEtaBins, l1varname='probe_L1Pt', l1thresholds=[5,10,15,20,22,25],  prefix=label[i]+"_plots" , binning = leptonpt_bins, l1thresholdforeffvsrunnb = 22, offlinethresholdforeffvsrunnb = 27)
+        df_mu[i] = makehistosforturnons_inprobeetaranges(df_mu[i], histos, etavarname='probe_Eta', phivarname='probe_Phi', ptvarname='probe_Pt', responsevarname='probe_L1PtoverRecoPt', etabins=muEtaBins, l1varname='probe_L1Pt', l1thresholds=[5,10,15,20,22,25],  prefix=label[i]+"_plots" , binning = leptonpt_bins, l1thresholdforeffvsrunnb = 22, offlinethresholdforeffvsrunnb = 27, nbbins = nbbins, runmin = runmin, runmax = runmax)
         
     
         df_mu[i] = df_mu[i].Define('probePt30_Eta','probe_Eta[probe_Pt>30]')
@@ -466,7 +511,7 @@ def EtSum(df):
 
     return df, histos
 
-def AnalyzeCleanJets(df, JetRecoPtCut, L1JetPtCut):    
+def AnalyzeCleanJets(df, JetRecoPtCut, L1JetPtCut, nbbins, runmin, runmax):    
     histos = {}
     #Find L1 jets matched to the offline jet
     df = df.Define('cleanJet_idxL1jet','FindL1ObjIdx(_L1jet_eta, _L1jet_phi, cleanJet_Eta, cleanJet_Phi)')
@@ -477,7 +522,7 @@ def AnalyzeCleanJets(df, JetRecoPtCut, L1JetPtCut):
     L1PtCuts = [30., 40., 60., 80., 100., 120., 140., 160., 180., 200.]
 
 
-    df = makehistosforturnons_inprobeetaranges(df, histos, etavarname='cleanJet_Eta', phivarname='cleanJet_Phi', ptvarname='cleanJet_Pt', responsevarname='cleanJet_L1PtoverRecoPt', etabins=jetEtaBins, l1varname='cleanJet_L1Pt', l1thresholds=L1PtCuts, prefix="Jet_plots", binning=jetmetpt_bins, l1thresholdforeffvsrunnb = L1JetPtCut, offlinethresholdforeffvsrunnb = JetRecoPtCut )
+    df = makehistosforturnons_inprobeetaranges(df, histos, etavarname='cleanJet_Eta', phivarname='cleanJet_Phi', ptvarname='cleanJet_Pt', responsevarname='cleanJet_L1PtoverRecoPt', etabins=jetEtaBins, l1varname='cleanJet_L1Pt', l1thresholds=L1PtCuts, prefix="Jet_plots", binning=jetmetpt_bins, l1thresholdforeffvsrunnb = L1JetPtCut, offlinethresholdforeffvsrunnb = JetRecoPtCut , nbbins = nbbins, runmin = runmin, runmax = runmax)
 
     '''
     for i in range(len(jetEtaBins)-1):
@@ -489,7 +534,10 @@ def AnalyzeCleanJets(df, JetRecoPtCut, L1JetPtCut):
         df_JetsBinnedInEta = df_JetsBinnedInEta.Define('cleanJetL1Pt_EtaRestricted','cleanJet_L1Pt[cleanJet_EtaRestricted]')
         df_JetsBinnedInEta = df_JetsBinnedInEta.Define('cleanJetL1OverRecoPt_EtaRestricted','cleanJetL1Pt_EtaRestricted/cleanJetPt_EtaRestricted')
         df_JetsBinnedInEta = df_JetsBinnedInEta.Define('runnb',"return ROOT::VecOps::RVec<int>(cleanJetL1OverRecoPt_EtaRestricted.size(), _runNb);")
-        histos[str_bineta+'_ResponseVsRunNb'] = df_JetsBinnedInEta.Histo2D(ROOT.RDF.TH2DModel('h_JetResponseVsRunNb_{}'.format(str_bineta), '', 5000, 355000, 360000, 100, 0 , 2), 'runnb', 'cleanJetL1OverRecoPt_EtaRestricted')
+        histos[str_bineta+'_ResponseVsRunNb'] = df_JetsBinnedInEta.Histo2D(
+        ROOT.RDF.TH2DModel('h_JetResponseVsRunNb_{}'.format(str_bineta), 
+        '', nbbins, runmin, runmax, 100, 0 , 2), 
+        'runnb', 'cleanJetL1OverRecoPt_EtaRestricted')
     
         for ipt in L1PtCuts:
             str_binetapt = "eta{}to{}_L1ptgt{}".format(jetEtaBins[i],jetEtaBins[i+1],ipt).replace(".","p")
@@ -532,7 +580,7 @@ def AnalyzeCleanJets(df, JetRecoPtCut, L1JetPtCut):
 
 
 
-def HFNoiseStudy(df):
+def HFNoiseStudy(df, nbbins, runmin, runmax):
     histos={}
     #debugging what happens in the HF 
     dfhfnoise = df.Define('isHFJet','cleanJet_Pt>30&&((cleanJet_Eta>3.0&&cleanJet_Eta<5)||(cleanJet_Eta>-5&&cleanJet_Eta<-3.))' )
@@ -556,7 +604,10 @@ def HFNoiseStudy(df):
         histos[s+'_photonpt'] = df_passvsfailL1[i].Histo1D(ROOT.RDF.TH1DModel(s+'_photonpt', '', 100, 0, 1000), 'ref_Pt')
         histos[s+'_nhfjets'] = df_passvsfailL1[i].Histo1D(ROOT.RDF.TH1DModel(s+'_nhfjets', '', 100, 0, 100), 'nHFJets')
         histos[s+'_npv'] = df_passvsfailL1[i].Histo1D(ROOT.RDF.TH1DModel(s+'_npv', '', 100, 0, 100), '_n_PV')
-        histos[s+'_runnb'] = df_passvsfailL1[i].Histo1D(ROOT.RDF.TH1DModel(s+'_runnb', '', 5000, 355000, 360000), '_runNb')
+        histos[s+'_runnb'] = df_passvsfailL1[i].Histo1D(
+                ROOT.RDF.TH1DModel(
+                    s+'_runnb', '', nbbins, runmin, runmax)
+                , '_runNb')
         histos[s+'_ptbalance'] = df_passvsfailL1[i].Histo1D(ROOT.RDF.TH1DModel(s+'_ptbalance', '', 100,0,2), 'ptbalance')
         histos[s+'_ptbalanceL1'] = df_passvsfailL1[i].Histo1D(ROOT.RDF.TH1DModel(s+'_ptbalanceL1', '', 100,0,2), 'ptbalanceL1')
 
@@ -579,19 +630,37 @@ def PtBalanceSelection(df):
     df = df.Define('probe_Phi','cleanJet_Phi[0]')
     return df
 
-def AnalyzePtBalance(df):
+def AnalyzePtBalance(df, nbbins, runmin, runmax):
     histos = {}
     df_JetsBinnedInEta ={}
     histos['L1JetvsEtaPhi'] = df.Histo3D(ROOT.RDF.TH3DModel('h_L1PtBalanceVsEtaPhi', 'ptbalanceL1', 100, -5, 5, 100, -3.1416, 3.1416, 100, 0, 2), 'probe_Eta','probe_Phi','ptbalanceL1')
     for i in range(len(jetEtaBins)-1):
         str_bineta = "eta{}to{}".format(jetEtaBins[i],jetEtaBins[i+1]).replace(".","p")
         df_JetsBinnedInEta[str_bineta] = df.Filter('abs(cleanJet_Eta[0])>={}&&abs(cleanJet_Eta[0])<{}'.format(jetEtaBins[i],jetEtaBins[i+1]))
-        histos['RecoJetvsRunNb'+str_bineta] = df_JetsBinnedInEta[str_bineta].Histo2D(ROOT.RDF.TH2DModel('h_PtBalanceVsRunNb_{}'.format(str_bineta), 'ptbalance', 5000, 355000,360000, 100,0,2), '_runNb','ptbalance')
-        histos['L1JetvsRunNb'+str_bineta] = df_JetsBinnedInEta[str_bineta].Histo2D(ROOT.RDF.TH2DModel('h_L1PtBalanceVsRunNb_{}'.format(str_bineta), 'ptbalanceL1', 5000, 355000,360000, 100,0,2), '_runNb','ptbalanceL1')
+
+        histos['RecoJetvsRunNb'+str_bineta] = df_JetsBinnedInEta[str_bineta].Histo2D(
+                ROOT.RDF.TH2DModel(
+                    'h_PtBalanceVsRunNb_{}'.format(str_bineta),
+                    'ptbalance', nbbins, runmin, runmax, 100,0,2),
+                '_runNb','ptbalance')
+        histos['L1JetvsRunNb'+str_bineta] = df_JetsBinnedInEta[str_bineta].Histo2D(
+                ROOT.RDF.TH2DModel(
+                    'h_L1PtBalanceVsRunNb_{}'.format(str_bineta), 
+                    'ptbalanceL1', nbbins, runmin, runmax, 100,0,2),
+                '_runNb','ptbalanceL1')
         histos['L1JetvsPU'+str_bineta] = df_JetsBinnedInEta[str_bineta].Histo2D(ROOT.RDF.TH2DModel('h_L1PtBalanceVsPU_{}'.format(str_bineta), 'ptbalanceL1', 100, 0, 100, 100, 0, 2), '_n_PV','ptbalanceL1')
 
         
     return df, histos
+
+
+def RunNbLimits(df):
+    runNb_max = df.Max("_runNb").GetValue() + 1
+    runNb_min = df.Min("_runNb").GetValue() - 1
+    nb_bins = int(runNb_max - runNb_min)
+    #print(nb_bins, runNb_min, runNb_max)
+    #quit()
+    return(nb_bins, runNb_min, runNb_max)
 
 
 
