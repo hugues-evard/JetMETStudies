@@ -9,11 +9,11 @@ TheSkim = "MCJECs"
 TheSkim = "L1Study"
 TheSkim = "L1Study_ZToMuMu"
 #TheSkim = "L1Study_ZToEE"
-#TheSkim = "L1Study_SingleMuforJME"
+TheSkim = "L1Study_SingleMuforJME"
 ReclusterCHSJets = False
 ReclusterGenJets = False
 #TheSkim = ""
-TheSkim = "L1Study"
+#TheSkim = "L1Study"
 #runEra="DataUL2017F"
 #runEra="MCUL2017"
 runEra="MCRun3"
@@ -61,7 +61,6 @@ lines = []
 process.source = cms.Source("PoolSource",
                                 fileNames = cms.untracked.vstring(
 
-'/store/mc/Run3Winter22MiniAOD/TTToSemiLeptonic_TuneCP5_13p6TeV-powheg-pythia8/MINIAODSIM/PUForMUOVal_122X_mcRun3_2021_realistic_v9-v2/2820000/08b5e1ae-7d65-4198-a9ec-fa27f8b16b3b.root'
 #                                    lines
 #2018
 #'/store/mc/RunIISummer19UL18MiniAOD/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v11_L1v1-v2/100000/00556E5A-E6CD-6C4B-83BA-0B5C00C0A5E4.root'
@@ -81,7 +80,10 @@ process.source = cms.Source("PoolSource",
 #'/store/data/Run2022C/EGamma/MINIAOD/PromptReco-v1/000/356/071/00000/861766b9-f568-4c74-96be-9a3d037b087d.root'
 #'/store/mc/Run3Winter22MiniAOD/DYJetsToLL_M-50_TuneCP5_13p6TeV-madgraphMLM-pythia8/MINIAODSIM/122X_mcRun3_2021_realistic_v9_ext1-v1/2830000/006d687f-44da-49f0-b0c0-f46b8600731f.root'
 #'file:/pnfs/iihe/cms/ph/sc4/store/data/Run2022E/Muon/MINIAOD/PromptReco-v1/000/359/686/00000/03a9cd9f-f2a9-4b20-93e2-69ec754c94d4.root'
-'file:/pnfs/iihe/cms/ph/sc4/store/data/Run2022E/EGamma/MINIAOD/PromptReco-v1/000/359/806/00000/1824aedf-1104-4f76-8f27-5b7856e192ce.root'
+#'file:/pnfs/iihe/cms/ph/sc4/store/data/Run2022E/EGamma/MINIAOD/PromptReco-v1/000/359/806/00000/1824aedf-1104-4f76-8f27-5b7856e192ce.root'
+#'/store/mc/Run3Winter22MiniAOD/TTToSemiLeptonic_TuneCP5_13p6TeV-powheg-pythia8/MINIAODSIM/PUForMUOVal_122X_mcRun3_2021_realistic_v9-v2/2820000/08b5e1ae-7d65-4198-a9ec-fa27f8b16b3b.root'
+#'/store/mc/Run3Winter22MiniAOD/TTToSemiLeptonic_TuneCP5_13p6TeV-powheg-pythia8/MINIAODSIM/PUForMUOVal_122X_mcRun3_2021_realistic_v9-v2/2820000/0963af58-3d53-44c0-89ac-e8eceee37d62.root'
+'/store/mc/Run3Winter22MiniAOD/TTToSemiLeptonic_TuneCP5_13p6TeV-powheg-pythia8/MINIAODSIM/PUForMUOVal_122X_mcRun3_2021_realistic_v9-v2/2830000/1f1937c4-c277-4ee0-9a54-9e4f87d9be2f.root'
 #'/store/mc/RunIISummer20UL18MiniAODv2/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/100000/4E295BA9-D9F7-6643-B993-57789E70C0CB.root'
 #'/store/data/Run2022D/Commissioning/MINIAOD/PromptReco-v2/000/357/756/00000/414e1689-6bbc-4540-8e1a-0d8f0abe815a.root'
 #'file:MINIAODRun3.root'

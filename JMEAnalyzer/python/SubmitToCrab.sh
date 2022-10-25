@@ -18,8 +18,8 @@ therequestname=$2
 
 
 # Set ISMC to true if thedataset contains AODSIM
-ISMC="True"
-#ISMC="False"
+#ISMC="True"
+ISMC="False"
 echo "$thedataset" | grep "AODSIM" && ISMC="True" || ISMC="False"
 # Set ISFS to true if thedataset contains Fast
 ISFS="False"
