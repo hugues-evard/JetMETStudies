@@ -159,7 +159,9 @@ def ZMuMu_MuSelection(df):
     df = df.Define('probe_Pt','_lPt[isProbe]')
     df = df.Define('probe_Eta','_lEta[isProbe]')
     df = df.Define('probe_Phi','_lPhi[isProbe]')
-    
+    #df = df.Define('test_probe', 'probe_Pt>35')
+    #print(df.Sum('test_probe').GetValue())
+
     return df
 
 
@@ -187,8 +189,6 @@ def makehistosforturnons_inprobeetaranges(df, histos, etavarname, phivarname, pt
 
         if i ==1 and prefix == 'EGNonIso_plots':
             df_etarange = df_etarange.Filter(stringToPrint)
-
-
         #Numerator/denominator for plateau eff vs runnb
         df_etarange = df_etarange.Define('inplateau','{}>={}&&inEtaRange'.format(ptvarname,offlinethresholdforeffvsrunnb))
         df_etarange = df_etarange.Define('N_inplateau','Sum(inplateau)')
@@ -390,17 +390,31 @@ def ZMuMu_Plots(df, nbbins, runmin, runmax):
                     'probe_Phi[probe_Pt>8&&probe_Pt<25&&probe_L1Pt_Bxplus1>10&&probe_L1Pt_Bxplus1<=21&&probe_L1Qual>=12]')
             
             df_mu[i] = df_mu[i].Define('probeL1Mu22Bxmin1_Eta',
-                    'probe_Eta[probe_Pt>8&&probe_Pt<25&&probe_L1Pt_Bxmin1>22&&probe_L1Qual>=12]')
+                    'probe_Eta[probe_Pt>20&&probe_L1Pt_Bxmin1>22&&probe_L1Qual>=12]')
             df_mu[i] = df_mu[i].Define('probeL1Mu22Bxmin1_Phi',
-                    'probe_Phi[probe_Pt>8&&probe_Pt<25&&probe_L1Pt_Bxmin1>22&&probe_L1Qual>=12]')
+                    'probe_Phi[probe_Pt>20&&probe_L1Pt_Bxmin1>22&&probe_L1Qual>=12]')
             df_mu[i] = df_mu[i].Define('probeL1Mu22Bx0_Eta',
-                    'probe_Eta[probe_Pt>8&&probe_Pt<25&&probe_L1Pt_Bx0>22&&probe_L1Qual>=12]')
+                    'probe_Eta[probe_Pt>20&&probe_L1Pt_Bx0>22&&probe_L1Qual>=12]')
             df_mu[i] = df_mu[i].Define('probeL1Mu22Bx0_Phi',
-                    'probe_Phi[probe_Pt>8&&probe_Pt<25&&probe_L1Pt_Bx0>22&&probe_L1Qual>=12]')
+                    'probe_Phi[probe_Pt>20&&probe_L1Pt_Bx0>22&&probe_L1Qual>=12]')
             df_mu[i] = df_mu[i].Define('probeL1Mu22Bxplus1_Eta',
-                    'probe_Eta[probe_Pt>8&&probe_Pt<25&&probe_L1Pt_Bxplus1>22&&probe_L1Qual>=12]')
+                    'probe_Eta[probe_Pt>20&&probe_L1Pt_Bxplus1>22&&probe_L1Qual>=12]')
             df_mu[i] = df_mu[i].Define('probeL1Mu22Bxplus1_Phi',
-                    'probe_Phi[probe_Pt>8&&probe_Pt<25&&probe_L1Pt_Bxplus1>22&&probe_L1Qual>=12]')
+                    'probe_Phi[probe_Pt>20&&probe_L1Pt_Bxplus1>22&&probe_L1Qual>=12]')
+
+            # counting events
+            df_mu[i] = df_mu[i].Define('test_probe', 'probe_Pt>20')
+            df_mu[i] = df_mu[i].Define('test_probeQual12', 'test_probe==1&&probe_L1Qual>=12')
+
+            nProbe = int(df_mu[i].Sum('test_probe').GetValue())
+            nProbeQual12 = int(df_mu[i].Sum('test_probeQual12').GetValue())
+            nProbeUnPre = int(df_mu[i].Filter("Flag_IsUnprefirable").Sum('test_probe').GetValue())
+            nProbeQual12UnPre = int(df_mu[i].Filter("Flag_IsUnprefirable").Sum('test_probeQual12').GetValue())
+
+            #print('There are {} muons with probe_Pt > 20'.format(nProbe))
+            #print('There are {} unprefirable muons with probe_Pt > 20'.format(nProbeUnPre))
+            #print('There are {} muons with probe_Pt > 20 and probe_L1Qual >= 12'.format(nProbeQual12))
+            #print('There are {} unprefirable muons with probe_Pt > 20 and probe_L1Qual >= 12'.format(nProbeQual12UnPre))
             
             histos['L1Mu10to21_bxmin1_etaphi'] = df_mu[i].Histo2D(ROOT.RDF.TH2DModel('L1Mu10to21_bxmin1_etaphi', '', 100, -5,5, 100, -3.1416, 3.1416), 'probeL1Mu10to21Bxmin1_Eta', 'probeL1Mu10to21Bxmin1_Phi')
             histos['L1Mu10to21_bx0_etaphi'] = df_mu[i].Histo2D(ROOT.RDF.TH2DModel('L1Mu10to21_bx0_etaphi', '', 100, -5,5, 100, -3.1416, 3.1416), 'probeL1Mu10to21Bx0_Eta', 'probeL1Mu10to21Bx0_Phi')
@@ -424,11 +438,12 @@ def ZMuMu_Plots(df, nbbins, runmin, runmax):
                         'probeL1Mu22Bx0_Eta',
                         'probeL1Mu22Bx0_Phi')
 
-            histos['L1Mu22_bxplus1_etaphi'] = df_mu[i].Histo2D(
-                    ROOT.RDF.TH2DModel('L1Mu22_bxplus1_etaphi', '',
-                            100, -5,5, 100, -3.1416, 3.1416),
-                    'probeL1Mu22Bxplus1_Eta',
-                    'probeL1Mu22Bxplus1_Phi')
+            histos['L1Mu22_bxplus1_etaphi'] = df_mu[i].Filter("Flag_IsUnprefirable")\
+                    .Histo2D(
+                        ROOT.RDF.TH2DModel('L1Mu22_bxplus1_etaphi', '',
+                                100, -5,5, 100, -3.1416, 3.1416),
+                        'probeL1Mu22Bxplus1_Eta',
+                        'probeL1Mu22Bxplus1_Phi')
 
             histos['L1Mu22_bxmin1_eta'] = df_mu[i].Filter("Flag_IsUnprefirable")\
                     .Histo1D(

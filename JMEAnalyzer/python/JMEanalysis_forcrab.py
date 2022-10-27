@@ -3,7 +3,6 @@ ReclusterCHSJets = False
 ReclusterGenJets = False
 runEra="THERUNERA"
 UseSQLiteFiles=True
-#UseSQLiteFiles=False
 
 ISMC=bool(MCBOOL)
 
@@ -36,16 +35,15 @@ patAlgosToolsTask = getPatAlgosToolsTask(process)
 process.source = cms.Source("PoolSource",
                                 fileNames = cms.untracked.vstring(
 
-#'/store/data/Run2017F/SingleElectron/MINIAOD/09Aug2019_UL2017_rsb-v2/00000/01856EE9-56C6-7240-A7BE-1D5DB9C26309.root',
-#'/store/data/Run2017F/SingleElectron/MINIAOD/09Aug2019_UL2017_rsb-v2/00000/019F7BB0-0604-DA43-91E1-1C7ED270C434.root',
-#'/store/data/Run2017F/SingleElectron/MINIAOD/09Aug2019_UL2017_rsb-v2/00000/01F852E5-0A2C-BD49-8FDD-AD4727172284.root',
-#'/store/data/Run2017F/SingleElectron/MINIAOD/09Aug2019_UL2017_rsb-v2/00000/021C12B1-A951-7C41-80B2-64C05C9B8B36.root',
-#'/store/data/Run2017F/SingleElectron/MINIAOD/09Aug2019_UL2017_rsb-v2/00000/02416733-BDD8-8A49-8A7A-CC4E81441F81.root',
-#'/store/data/Run2017F/SingleElectron/MINIAOD/09Aug2019_UL2017_rsb-v2/00000/027F534D-235F-A44B-80F0-C4F76C809628.root',
-#'/store/data/Run2017F/SingleElectron/MINIAOD/09Aug2019_UL2017_rsb-v2/00000/03AE91F5-BDC3-514E-8B19-E45032A06A70.root',
-#'/store/data/Run2017F/SingleElectron/MINIAOD/09Aug2019_UL2017_rsb-v2/00000/03B7EAF6-5670-7D44-983B-D2E50EDDB3B4.root',
-#'/store/data/Run2017F/SingleElectron/MINIAOD/09Aug2019_UL2017_rsb-v2/00000/0459255D-273E-C643-950C-A75722A0D7D9.root'
-'/store/data/Run2022E/Muon/MINIAOD/PromptReco-v1/000/359/045/00000/f0d64bed-172f-470b-bdf3-7abc1be22c5d.root',
+'/store/data/Run2017F/SingleElectron/MINIAOD/09Aug2019_UL2017_rsb-v2/00000/01856EE9-56C6-7240-A7BE-1D5DB9C26309.root',
+'/store/data/Run2017F/SingleElectron/MINIAOD/09Aug2019_UL2017_rsb-v2/00000/019F7BB0-0604-DA43-91E1-1C7ED270C434.root',
+'/store/data/Run2017F/SingleElectron/MINIAOD/09Aug2019_UL2017_rsb-v2/00000/01F852E5-0A2C-BD49-8FDD-AD4727172284.root',
+'/store/data/Run2017F/SingleElectron/MINIAOD/09Aug2019_UL2017_rsb-v2/00000/021C12B1-A951-7C41-80B2-64C05C9B8B36.root',
+'/store/data/Run2017F/SingleElectron/MINIAOD/09Aug2019_UL2017_rsb-v2/00000/02416733-BDD8-8A49-8A7A-CC4E81441F81.root',
+'/store/data/Run2017F/SingleElectron/MINIAOD/09Aug2019_UL2017_rsb-v2/00000/027F534D-235F-A44B-80F0-C4F76C809628.root',
+'/store/data/Run2017F/SingleElectron/MINIAOD/09Aug2019_UL2017_rsb-v2/00000/03AE91F5-BDC3-514E-8B19-E45032A06A70.root',
+'/store/data/Run2017F/SingleElectron/MINIAOD/09Aug2019_UL2017_rsb-v2/00000/03B7EAF6-5670-7D44-983B-D2E50EDDB3B4.root',
+'/store/data/Run2017F/SingleElectron/MINIAOD/09Aug2019_UL2017_rsb-v2/00000/0459255D-273E-C643-950C-A75722A0D7D9.root'
 
         )
                             )
@@ -185,6 +183,13 @@ if "DataRun3" in runEra:
     PhotonTightWP='mvaPhoID-RunIIFall17-v2-wp80'
     RochesterCorrectionFile+="RoccoR2018UL.txt"
 
+if "MCRun3" in runEra:
+    process.GlobalTag.globaltag="123X_dataRun3_Prompt_v12"
+    EleVetoWP='cutBasedElectronID-Fall17-94X-V2-veto'
+    EleTightWP='mvaEleID-Fall17-iso-V2-wp90'
+    EleLooseWP='mvaEleID-Fall17-iso-V2-wpHZZ'
+    PhotonTightWP='mvaPhoID-RunIIFall17-v2-wp80'
+    RochesterCorrectionFile+="RoccoR2018UL.txt"
 
 
 #Now UL MC
@@ -271,6 +276,7 @@ process.jmeanalyzer = cms.EDAnalyzer('JMEAnalyzer',
                                      PuppiMet=cms.InputTag("slimmedMETsPuppi"),
                                      Electrons=cms.InputTag("slimmedElectrons"),
                                      Muons=cms.InputTag("slimmedMuons"),
+                                     Taus=cms.InputTag("slimmedTaus"),
                                      Photons=cms.InputTag("slimmedPhotons"),
                                      JetPtCut=cms.double(2),
                                      AK8JetPtCut=cms.double(10),
@@ -279,6 +285,7 @@ process.jmeanalyzer = cms.EDAnalyzer('JMEAnalyzer',
                                      ElectronLooseWorkingPoint=cms.string(EleLooseWP),
                                      ElectronTightWorkingPoint=cms.string(EleTightWP),
                                      MuonPtCut=cms.double(1),
+                                     TauPtCut=cms.double(1000),
                                      RochCorrFile=cms.string(RochesterCorrectionFile),
                                      PhotonPtCut=cms.double(5),
                                      PhotonTightWorkingPoint=cms.string(PhotonTightWP),
@@ -454,10 +461,10 @@ process.BadChargedCandidateFilterUpdate=BadChargedCandidateFilter.clone(
 import FWCore.PythonUtilities.LumiList as LumiList
 import FWCore.ParameterSet.Types as CfgTypes
 
-"""
 
 #process.source.lumisToProcess = CfgTypes.untracked(CfgTypes.VLuminosityBlockRange())
 
+'''
 JSONfile =''
 
 if "DataUL2017" in runEra:
@@ -477,8 +484,7 @@ if not ISMC:
     process.source.lumisToProcess.extend(myLumis)
 print( "json" )
 print( JSONfile )
-"""
-
+'''
 #Updating JECs
 JECsVersion=""
 if "MCUL2016APV" in runEra:

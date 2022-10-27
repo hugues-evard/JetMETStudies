@@ -53,6 +53,10 @@ def main():
 
     nEvents = df.Count().GetValue()
     print('There are {} events'.format(nEvents))
+
+    # print number of unprefirable
+    #nUnprefirable = df.Filter("Flag_IsUnprefirable").Count().GetValue()
+    #print('There are {} unprefirable events initially'.format(nUnprefirable))
     
     #Max events to run on 
     maxEvents = min(nEvents, args.maxEvents) if args.maxEvents >=0 else nEvents
@@ -63,6 +67,10 @@ def main():
     df = df.Filter('Flag_HBHENoiseFilter&&Flag_HBHENoiseIsoFilter&&Flag_goodVertices&&Flag_EcalDeadCellTriggerPrimitiveFilter&&Flag_BadPFMuonFilter&&Flag_BadPFMuonDzFilter')
 
     nbbins, runmin, runmax = RunNbLimits(df)
+
+    # print number of unprefirable
+    #nUnprefirable = df.Filter("Flag_IsUnprefirable").Count().GetValue()
+    #print('There are {} unprefirable events after first filters'.format(nUnprefirable))
     
     if args.outputFile == '':
         args.outputFile = 'output_'+args.channel+'.root'
@@ -75,6 +83,10 @@ def main():
 
     if args.channel == 'PhotonJet':
         df = SinglePhotonSelection(df) 
+
+        # print number of unprefirable
+        #nUnprefirable = df.Filter("Flag_IsUnprefirable").Count().GetValue()
+        #print('There are {} unprefirable events after SinglePhotonSelection'.format(nUnprefirable))
         
         df = CleanJets(df)
         
@@ -103,6 +115,10 @@ def main():
         
     if args.channel == 'MuonJet':
         df = MuonJet_MuonSelection(df) 
+
+        # print number of unprefirable
+        #nUnprefirable = df.Filter("Flag_IsUnprefirable").Count().GetValue()
+        #print('There are {} unprefirable events after MuonJet MuonSelection'.format(nUnprefirable))
         
         df = CleanJets(df)
         
@@ -124,6 +140,11 @@ def main():
 
     if args.channel == 'ZToEE':
         df = ZEE_EleSelection(df)
+
+        # print number of unprefirable
+        #nUnprefirable = df.Filter("Flag_IsUnprefirable").Count().GetValue()
+        #print('There are {} unprefirable events after ZEE_EleSelection'.format(nUnprefirable))
+
         df, histos = ZEE_Plots(df, nbbins, runmin, runmax)
         
         for i in histos:
@@ -131,6 +152,11 @@ def main():
 
     if args.channel == 'ZToMuMu':
         df = ZMuMu_MuSelection(df)
+
+        # print number of unprefirable
+        #nUnprefirable = df.Filter("Flag_IsUnprefirable").Count().GetValue()
+        #print('There are {} unprefirable events after ZMuMu_MuSelection'.format(nUnprefirable))
+
         df, histos = ZMuMu_Plots(df, nbbins, runmin, runmax)
 
         for i in histos:
