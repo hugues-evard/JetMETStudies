@@ -34,11 +34,13 @@ config.Data.inputDataset = 'THEDATASET'
 
 config.Data.inputDBS = 'global'
 config.Data.splitting = 'Automatic'
+#config.Data.splitting = 'FileBased'
 #config.Data.unitsPerJob = 2
 config.Data.allowNonValidInputDataset = True 
 
 
-config.Data.publication = True
+#config.Data.publication = True
+config.Data.publication = False
 config.Data.outputDatasetTag = 'CAMPAIGN_RUNERA_THESKIM'
 #config.Data.lumiMask = 'Cert_Collisions2022_355100_357900_Golden.json'
 #config.Data.lumiMask = 'Cert_Collisions2016to2022_273158_357900_Golden.json'

@@ -1,4 +1,7 @@
+ReclusterCHSJets = False
+ReclusterGenJets = False
 
+'''
 #TheSkim = "MCJECs"
 TheSkim = "ZJetsResiduals"
 TheSkim = "MCJECs" 
@@ -10,20 +13,38 @@ TheSkim = "L1Study"
 TheSkim = "L1Study_ZToMuMu"
 #TheSkim = "L1Study_ZToEE"
 #TheSkim = "L1Study_SingleMuforJME"
+TheSkim = "L1Studies_EphemeralHLTPhysics"
+#TheSkim = "L1Study_SinglePhotonforJME"
 ReclusterCHSJets = False
 ReclusterGenJets = False
-#TheSkim = ""
-#TheSkim = "L1Study"
 #runEra="DataUL2017F"
 #runEra="MCUL2017"
 #runEra="MCRun3"
-#runEra="DataRun3"
 #runEra="DataUL2018A"
 #runEra="DataRun3"
 #runEra="MCRun3"
 runEra="DataRun3"
 #runEra="DataUL2018D"
 #ISMC=True
+=======
+'''
+
+import FWCore.ParameterSet.VarParsing as VarParsing
+options = VarParsing.VarParsing ('analysis')
+options.register('runEra', 'DataRun3', VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.string, "run era")
+options.register('TheSkim', '', VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.string, "skim")
+
+
+options.outputFile = 'output.root'
+options.inputFiles = 'file1.root', 'file2.root'
+options.runEra = 'DataRun3'
+options.maxEvents = -1
+options.parseArguments()
+
+runEra = options.runEra
+TheSkim = options.TheSkim
+print("Skim is: ", TheSkim)
+
 ISMC=False
 if "MC" in runEra:
     ISMC=True
@@ -44,9 +65,9 @@ import FWCore.ParameterSet.Config as cms
 process = cms.Process("Demo")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = 10000
+process.MessageLogger.cerr.FwkReport.reportEvery = 100
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )  
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )  
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(23374) )  
 
 from PhysicsTools.PatAlgos.tools.helpers import getPatAlgosToolsTask
@@ -61,6 +82,10 @@ lines = []
 process.source = cms.Source("PoolSource",
                                 fileNames = cms.untracked.vstring(
 
+                                    options.inputFiles
+#'file:'
+#'/store/mc/Run3Winter22MiniAOD/TTToSemiLeptonic_TuneCP5_13p6TeV-powheg-pythia8/MINIAODSIM/PUForMUOVal_122X_mcRun3_2021_realistic_v9-v2/2830000/1f1937c4-c277-4ee0-9a54-9e4f87d9be2f.root'
+#'/store/mc/Run3Winter22MiniAOD/TTToSemiLeptonic_TuneCP5_13p6TeV-powheg-pythia8/MINIAODSIM/PUForMUOVal_122X_mcRun3_2021_realistic_v9-v2/2820000/08b5e1ae-7d65-4198-a9ec-fa27f8b16b3b.root'
 #                                    lines
 #2018
 #'/store/mc/RunIISummer19UL18MiniAOD/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v11_L1v1-v2/100000/00556E5A-E6CD-6C4B-83BA-0B5C00C0A5E4.root'
@@ -177,7 +202,7 @@ process.source = cms.Source("PoolSource",
 
 #process.TFileService = cms.Service("TFileService", fileName = cms.string("outputQCDHT1000to1500_puppiv16_200kevts.root") )
 #process.TFileService = cms.Service("TFileService", fileName = cms.string("outputQCDHT1000to1500_puppiv16_23374evts.root") )
-process.TFileService = cms.Service("TFileService", fileName = cms.string("output.root") )
+process.TFileService = cms.Service("TFileService", fileName = cms.string(options.outputFile) )
 
 #process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
@@ -407,6 +432,7 @@ process.jmeanalyzer = cms.EDAnalyzer('JMEAnalyzer',
                                      PuppiMet=cms.InputTag("slimmedMETsPuppi"),
                                      Electrons=cms.InputTag("slimmedElectrons"),
                                      Muons=cms.InputTag("slimmedMuons"),
+                                     Taus=cms.InputTag("slimmedTaus"),
                                      Photons=cms.InputTag("slimmedPhotons"),
                                      JetPtCut=cms.double(2),
                                      AK8JetPtCut=cms.double(10),
@@ -415,12 +441,14 @@ process.jmeanalyzer = cms.EDAnalyzer('JMEAnalyzer',
                                      ElectronLooseWorkingPoint=cms.string(EleLooseWP),
                                      ElectronTightWorkingPoint=cms.string(EleTightWP),
                                      MuonPtCut=cms.double(1),
+                                     TauPtCut=cms.double(1000),
                                      RochCorrFile=cms.string(RochesterCorrectionFile),
                                      PhotonPtCut=cms.double(5),
                                      PhotonTightWorkingPoint=cms.string(PhotonTightWP),
                                      PFCandPtCut=cms.double(25000),
                                      SaveTree=cms.bool(True),
                                      IsMC=cms.bool(ISMC),
+                                     SaveTaus=cms.bool(False),
                                      SavePUIDVariables=cms.bool(False),
                                      SaveAK8Jets=cms.bool(False),
                                      SaveCaloJets=cms.bool(True),
@@ -461,8 +489,8 @@ if TheSkim == "ZJetsResiduals" or TheSkim == "GammaJetsResiduals":
     process.jmeanalyzer.DropBadJets=cms.bool(True)
 
 if TheSkim == "FourLeptons":
-    process.jmeanalyzer.ElectronPtCut=cms.double(10)
-    process.jmeanalyzer.MuonPtCut=cms.double(10)
+    process.jmeanalyzer.ElectronPtCut=cms.double(7)
+    process.jmeanalyzer.MuonPtCut=cms.double(5)
     process.jmeanalyzer.JetPtCut=cms.double(25)
     process.jmeanalyzer.AK8JetPtCut=cms.double(1000)
     process.jmeanalyzer.PhotonPtCut=cms.double(2000)
