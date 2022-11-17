@@ -2,7 +2,7 @@ from CRABClient.UserUtilities import config
 config = config()
 
 config.General.requestName = 'THEREQUESTNAME'
-config.General.workArea = 'crabworkarea_07oct2022_pnfs_bugfix'
+config.General.workArea = 'crabworkarea_14nov2022_pnfs_bugfix'
 config.General.transferOutputs = True
 config.General.transferLogs = True
 
@@ -42,6 +42,7 @@ config.Data.publication = True
 config.Data.outputDatasetTag = 'CAMPAIGN_RUNERA_THESKIM'
 #config.Data.lumiMask = 'Cert_Collisions2022_355100_357900_Golden.json'
 #config.Data.lumiMask = 'Cert_Collisions2016to2022_273158_357900_Golden.json'
+config.Data.lumiMask = 'Cert_Collisions2022_355100_360491_Golden.json'
 
 
 #config.Data.outLFNDirBase = '/store/group/dpg_trigger/comm_trigger/L1Trigger/lathomas/Run3Commissioning'

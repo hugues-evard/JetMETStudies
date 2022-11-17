@@ -375,7 +375,8 @@ if TheSkim == "L1Study_ZToMuMu" or TheSkim == "L1Study_ZToEE":
     process.jmeanalyzer.AK8JetPtCut=cms.double(20000)
     process.jmeanalyzer.PhotonPtCut=cms.double(20000)
     process.jmeanalyzer.ElectronPtCut=cms.double(10)
-    process.jmeanalyzer.MuonPtCut=cms.double(5)
+    #process.jmeanalyzer.MuonPtCut=cms.double(5)
+    process.jmeanalyzer.MuonPtCut=cms.double(3)
     process.jmeanalyzer.ApplyPhotonID=cms.bool(False)
     process.jmeanalyzer.SaveAK8Jets=cms.bool(False)
     process.jmeanalyzer.SaveCaloJets=cms.bool(False)
@@ -476,7 +477,8 @@ if "Data2017" in runEra:
 if "Data2016" in runEra or "DataUL2016" in runEra:
     JSONfile = 'Cert_271036-284044_13TeV_ReReco_07Aug2017_Collisions16_JSON.txt'
 if "DataRun3" in runEra:
-    JSONfile = 'Cert_Collisions2022_355100_357900_Golden.json'
+    #JSONfile = 'Cert_Collisions2022_355100_357900_Golden.json'
+    JSONfile = 'Cert_Collisions2022_355100_360491_Golden.json'
 
 myLumis = LumiList.LumiList(filename = JSONfile).getCMSSWString().split(',')
 

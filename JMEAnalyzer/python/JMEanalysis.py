@@ -9,22 +9,22 @@ TheSkim = "MCJECs"
 TheSkim = "L1Study"
 TheSkim = "L1Study_ZToMuMu"
 #TheSkim = "L1Study_ZToEE"
-TheSkim = "L1Study_SingleMuforJME"
+#TheSkim = "L1Study_SingleMuforJME"
 ReclusterCHSJets = False
 ReclusterGenJets = False
 #TheSkim = ""
 #TheSkim = "L1Study"
 #runEra="DataUL2017F"
 #runEra="MCUL2017"
-runEra="MCRun3"
+#runEra="MCRun3"
 #runEra="DataRun3"
 #runEra="DataUL2018A"
 #runEra="DataRun3"
 #runEra="MCRun3"
-#runEra="DataRun3"
+runEra="DataRun3"
 #runEra="DataUL2018D"
-ISMC=True
-#ISMC=False
+#ISMC=True
+ISMC=False
 if "MC" in runEra:
     ISMC=True
 if not ISMC:
@@ -83,7 +83,7 @@ process.source = cms.Source("PoolSource",
 #'file:/pnfs/iihe/cms/ph/sc4/store/data/Run2022E/EGamma/MINIAOD/PromptReco-v1/000/359/806/00000/1824aedf-1104-4f76-8f27-5b7856e192ce.root'
 #'/store/mc/Run3Winter22MiniAOD/TTToSemiLeptonic_TuneCP5_13p6TeV-powheg-pythia8/MINIAODSIM/PUForMUOVal_122X_mcRun3_2021_realistic_v9-v2/2820000/08b5e1ae-7d65-4198-a9ec-fa27f8b16b3b.root'
 #'/store/mc/Run3Winter22MiniAOD/TTToSemiLeptonic_TuneCP5_13p6TeV-powheg-pythia8/MINIAODSIM/PUForMUOVal_122X_mcRun3_2021_realistic_v9-v2/2820000/0963af58-3d53-44c0-89ac-e8eceee37d62.root'
-'/store/mc/Run3Winter22MiniAOD/TTToSemiLeptonic_TuneCP5_13p6TeV-powheg-pythia8/MINIAODSIM/PUForMUOVal_122X_mcRun3_2021_realistic_v9-v2/2830000/1f1937c4-c277-4ee0-9a54-9e4f87d9be2f.root'
+#'/store/mc/Run3Winter22MiniAOD/TTToSemiLeptonic_TuneCP5_13p6TeV-powheg-pythia8/MINIAODSIM/PUForMUOVal_122X_mcRun3_2021_realistic_v9-v2/2830000/1f1937c4-c277-4ee0-9a54-9e4f87d9be2f.root'
 #'/store/mc/RunIISummer20UL18MiniAODv2/DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v2/100000/4E295BA9-D9F7-6643-B993-57789E70C0CB.root'
 #'/store/data/Run2022D/Commissioning/MINIAOD/PromptReco-v2/000/357/756/00000/414e1689-6bbc-4540-8e1a-0d8f0abe815a.root'
 #'file:MINIAODRun3.root'
@@ -156,6 +156,7 @@ process.source = cms.Source("PoolSource",
 #'/store/mc/RunIISummer20UL18MiniAODv2/QCD_bEnriched_HT2000toInf_TuneCP5_13TeV-madgraph-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v1/110000/C46792AE-B560-3541-B67A-DD73050C49A8.root'
 #'/store/data/Run2018A/SingleMuon/MINIAOD/UL2018_MiniAODv2-v3/2530000/07C10A10-6C29-AA46-B465-4FADE04566C4.root'
 #'/store/data/Run2022E/Muon/MINIAOD/PromptReco-v1/000/359/286/00000/7a50e5aa-a891-4159-acc4-30fc2c477b90.root'
+'/store/data/Run2022E/Muon/MINIAOD/PromptReco-v1/000/359/286/00000/52875029-4950-4ef8-88b5-3e64308a65d1.root'
 #'/store/data/Run2018D/DoubleMuon/MINIAOD/UL2018_MiniAODv2-v1/270002/152AABA5-91A3-9F4B-82BE-654A96DEAE98.root'
 #Data
 #'/store/data/Run2017F/DoubleMuon/MINIAOD/09Aug2019_UL2017-v1/270000/527C5A3A-7C09-4F42-B9DA-A84871504EBF.root'
@@ -502,7 +503,8 @@ if TheSkim == "L1Study_ZToMuMu" or TheSkim == "L1Study_ZToEE":
     process.jmeanalyzer.AK8JetPtCut=cms.double(20000)
     process.jmeanalyzer.PhotonPtCut=cms.double(20000)
     process.jmeanalyzer.ElectronPtCut=cms.double(10)
-    process.jmeanalyzer.MuonPtCut=cms.double(5)
+    #process.jmeanalyzer.MuonPtCut=cms.double(5)
+    process.jmeanalyzer.MuonPtCut=cms.double(3)
     process.jmeanalyzer.ApplyPhotonID=cms.bool(False)
     process.jmeanalyzer.SaveAK8Jets=cms.bool(False)
     process.jmeanalyzer.SaveCaloJets=cms.bool(False)
@@ -590,7 +592,6 @@ import FWCore.ParameterSet.Types as CfgTypes
 process.source.lumisToProcess = CfgTypes.untracked(CfgTypes.VLuminosityBlockRange())
 
 
-"""
 JSONfile =''
 
 if "DataUL2017" in runEra:
@@ -603,14 +604,15 @@ if "Data2016" in runEra or "DataUL2016" in runEra:
     JSONfile = 'Cert_271036-284044_13TeV_ReReco_07Aug2017_Collisions16_JSON.txt'
 if "DataRun3" in runEra:
     #JSONfile = 'Cert_Collisions2022_355100_357900_Golden.json' 
-    JSONfile = 'Cert_Collisions2016to2022_273158_357900_Golden.json' 
+    #JSONfile = 'Cert_Collisions2016to2022_273158_357900_Golden.json' 
+    JSONfile = 'Cert_Collisions2022_355100_360491_Golden.json' 
+    #JSONfile = 'Cert_271036-284044_13TeV_ReReco_07Aug2017_Collisions16_JSON.txt'
 
 myLumis = LumiList.LumiList(filename = JSONfile).getCMSSWString().split(',')
-#if not ISMC:
-#    process.source.lumisToProcess.extend(myLumis)
+if not ISMC:
+    process.source.lumisToProcess.extend(myLumis)
 print( "json" )
 print( JSONfile )
-"""
 
 #Updating JECs
 JECsVersion=""

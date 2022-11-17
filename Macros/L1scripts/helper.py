@@ -153,7 +153,8 @@ def ZMuMu_MuSelection(df):
 
     df = df.Define('isTag','_lPt>25&&abs(_lpdgId)==13&&_lPassTightID&&_lpassHLT_IsoMu24')
     df = df.Filter('Sum(isTag)>0')
-    df = df.Define('isProbe','_lPt>5&&abs(_lpdgId)==13&&_lPassTightID&& (Sum(isTag)>=2|| isTag==0)')
+    #df = df.Define('isProbe','_lPt>5&&abs(_lpdgId)==13&&_lPassTightID&& (Sum(isTag)>=2|| isTag==0)')
+    df = df.Define('isProbe','_lPt>3&&abs(_lpdgId)==13&&_lPassTightID&& (Sum(isTag)>=2|| isTag==0)')
     df = df.Filter('_mll>80&&_mll<100')
 
     df = df.Define('probe_Pt','_lPt[isProbe]')
@@ -505,6 +506,7 @@ def EtSum(df):
     df = df.Define('metnomu_y','_met*sin(_met_phi)+muons_py')
     df = df.Define('MetNoMu','sqrt(metnomu_x*metnomu_x+metnomu_y*metnomu_y)')
     df = df.Define('L1_ETMHF80','passL1_Initial_bx0[419]')
+    df = df.Define('L1_ETMHF90','passL1_Initial_bx0[420]')
     df = df.Define('L1_ETMHF100','passL1_Initial_bx0[421]')
 
     histos['h_MetNoMu_Denominator'] = df.Histo1D(ROOT.RDF.TH1DModel('h_MetNoMu_Denominator', '', len(jetmetpt_bins)-1, array('d',jetmetpt_bins)), 'MetNoMu') 
@@ -513,6 +515,8 @@ def EtSum(df):
     histos['L1_ETMHF80'] = dfmetl1.Histo1D(ROOT.RDF.TH1DModel('h_MetNoMu_ETMHF80', '', len(jetmetpt_bins)-1, array('d',jetmetpt_bins)), 'MetNoMu')
     dfmetl1 = df.Filter('passL1_Initial_bx0[421]')
     histos['L1_ETMHF100'] = dfmetl1.Histo1D(ROOT.RDF.TH1DModel('h_MetNoMu_ETMHF100', '', len(jetmetpt_bins)-1, array('d',jetmetpt_bins)), 'MetNoMu')
+    dfmetl1 = df.Filter('passL1_Initial_bx0[420]')
+    histos['L1_ETMHF90'] = dfmetl1.Histo1D(ROOT.RDF.TH1DModel('h_MetNoMu_ETMHF90', '', len(jetmetpt_bins)-1, array('d',jetmetpt_bins)), 'MetNoMu')
 
     histos['HLT_PFMETNoMu120_PFMHTNoMu120_IDTight'] =  df.Filter('HLT_PFMETNoMu120_PFMHTNoMu120_IDTight').Histo1D(ROOT.RDF.TH1DModel('h_HLT_PFMETNoMu120_PFMHTNoMu120_IDTight', '', len(jetmetpt_bins)-1, array('d',jetmetpt_bins)), 'MetNoMu')
     histos['HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60'] =  df.Filter('HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60').Histo1D(ROOT.RDF.TH1DModel('h_HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60', '', len(jetmetpt_bins)-1, array('d',jetmetpt_bins)), 'MetNoMu')

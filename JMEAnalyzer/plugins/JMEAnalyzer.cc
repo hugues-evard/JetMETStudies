@@ -1172,7 +1172,7 @@ JMEAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     }
     
     bool passvetoid=  (&*muon)->passed(reco::Muon::CutBasedIdLoose)&& (&*muon)->passed(reco::Muon::PFIsoVeryLoose)&&(&*muon)->pt()>10 ;  
-    passvetoid=  (&*muon)->isStandAloneMuon() || (&*muon)->pt()>5;
+    passvetoid=  (&*muon)->isStandAloneMuon() || (&*muon)->pt()>3;
     if(!passvetoid) continue;
     //Counting the number of muons, not all of them will be stored 
     _nMus++;
