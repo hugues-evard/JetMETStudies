@@ -71,6 +71,8 @@ def main():
     # print number of unprefirable
     #nUnprefirable = df.Filter("Flag_IsUnprefirable").Count().GetValue()
     #print('There are {} unprefirable events after first filters'.format(nUnprefirable))
+    print("nbbins, runmin, runmax: {}, {}, {}".format(nbbins, runmin, runmax))
+
     
     if args.outputFile == '':
         args.outputFile = 'output_'+args.channel+'.root'

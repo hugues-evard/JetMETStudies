@@ -969,7 +969,7 @@ JMEAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       _L1mu_TFIdx.push_back( l1muonit->tfMuonIndex());
     }
   }
-  
+
   if(Debug_) std::cout <<"Entering analyze 5" <<std::endl;
 
   edm::Handle<l1t::EGammaBxCollection> l1egcoll;
@@ -1189,6 +1189,12 @@ JMEAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     if(!passvetoid) continue;
     //Counting the number of muons, not all of them will be stored 
     _nMus++;
+    
+    // debug print
+    if(Debug_){
+        std::cout << "muon pt: " << (&*muon)->pt() << std::endl;
+    }
+
     if((&*muon)->pt()<MuonPtCut_)continue;
     //std::cout << "Muon pt, eta, phi, pass IsoMu24" << (&*muon)->pt()<<", " << (&*muon)->eta()<<", " << (&*muon)->phi() <<", "<<(&*muon)->triggered("HLT_IsoMu24_v*")  <<std::endl;
     _lEta.push_back((&*muon)->eta());
@@ -1334,11 +1340,15 @@ JMEAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   Float_t mll(0),ptll(0),pzll(0),yll(0),phill(0),dphill(0),costhCSll(0);
   for(unsigned int i = 0; i < _lPt.size(); i++){
     if(_lPt.size() !=2) continue;
-    if(_lPt[i]<5) continue;
+    //if(_lPt[i]<5) continue;
+    if((abs(_lpdgId[i]) == 13) && (_lPt[i]<MuonPtCut_)) continue;
+    if((abs(_lpdgId[i]) == 11) && (_lPt[i]<ElectronPtCut_)) continue;
       if(!_lPassTightID[i])  continue;
       if(fabs(_lpdgId[i]) !=11 && fabs(_lpdgId[i])!=13 ) continue;
       for(unsigned int j = 0; j < i; j++){
-        if(_lPt[j]<5) continue;
+        //if(_lPt[j]<5) continue;
+        if((abs(_lpdgId[j]) == 13) && (_lPt[j]<MuonPtCut_)) continue;
+        if((abs(_lpdgId[j]) == 11) && (_lPt[j]<ElectronPtCut_)) continue;
         if(!_lPassTightID[j])  continue;
         if(fabs(_lpdgId[j]) !=11 && fabs(_lpdgId[j])!=13 ) continue;
         //if( _lpdgId[i] != -_lpdgId[j]  ) continue;

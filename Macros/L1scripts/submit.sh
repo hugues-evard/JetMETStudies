@@ -91,7 +91,7 @@ request_disk   = 100MB
 #+xcount = 4            # Request 4 cores
 #+maxMemory = 4000      # Request 4GB of RAM
 #+maxWallTime = 120     # Request 2 hrs of wall clock time
-#+remote_queue = "osg"  # Request the OSG queue
+#+remote_queue = \"osg\"  # Request the OSG queue
 
 # Run job
 queue filename matching files $input

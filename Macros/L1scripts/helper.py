@@ -10,6 +10,7 @@ leptonpt_bins = array('f',[ i for i in range(50) ] + [ 50+2*i for i in range(10)
 jetmetpt_bins = array('f',[ i*5 for i in range(50) ] +  [250+10*i for i in range(25) ]  + [500+20*i for i in range(10) ] + [700, 800, 900, 1000, 1200, 1500, 2000 ])
 #String printing stuff for a few events
 stringToPrint = '''
+//if(true) {
 if(EventsToPrint <100) {
 
 cout << "*********New Event********"<<endl;
@@ -91,8 +92,71 @@ return true;
 
 
 
+printJets_old = '''
+if(Max(_jetPt) >= 400.) {
+cout << "*********High pT Jet********"<<endl;
+cout << "runNb: " << _runNb<<endl;
+cout << "eventNb: " << _eventNb <<endl;
+cout << "lumiBlock: " << _lumiBlock <<endl;
+cout << "Max(jet pt): " << Max(_jetPt) <<endl;
+}
+return true;
+'''
 
+printJets_old = '''
+for(unsigned int i = 0; i < (_jetPt).size(); i++){
+    if((_jetPt)[i] > 400. && abs((_jetEta)[i]) < 2.5){
+        cout << "*** High pT Jet ***" << endl;
+        cout << "runNb: " << _runNb<<endl;
+        cout << "eventNb: " << _eventNb <<endl;
+        cout << "lumiBlock: " << _lumiBlock <<endl;
+        cout << "pT: " << (_jetPt)[i] << endl;
+        cout << "eta: " << (_jetEta)[i] << endl;
+        cout << "phi: " << (_jetPhi)[i] << endl;
+        cout << "CHEF: " << (_jet_CHEF)[i] << endl;
+        cout << "NHEF: " << (_jet_NHEF)[i] << endl;
+        cout << "NEEF: " << (_jet_NEEF)[i] << endl;
+        cout << "CEEF: " << (_jet_CEEF)[i] << endl;
+        cout << "MUEF: " << (_jet_MUEF)[i] << endl;
+    }
+}
+return true;
+'''
 
+printJets = '''
+for(unsigned int i = 0; i < (cleanJet_Pt).size(); i++){
+    if((cleanJet_Pt)[i] > 400. && abs((cleanJet_Eta)[i]) < 2.5){
+        cout << "*** High pT clean Jet ***" << endl;
+        cout << "runNb: " << _runNb<<endl;
+        cout << "eventNb: " << _eventNb <<endl;
+        cout << "lumiBlock: " << _lumiBlock <<endl;
+        cout << "L1 jet idx: " << (cleanJet_idxL1jet)[i] << endl;
+        cout << "pT: " << (cleanJet_Pt)[i] << endl;
+        cout << "eta: " << (cleanJet_Eta)[i] << endl;
+        cout << "phi: " << (cleanJet_Phi)[i] << endl;
+        cout << "CHEF: " << (cleanJet_CHEF)[i] << endl;
+        cout << "NHEF: " << (cleanJet_NHEF)[i] << endl;
+        cout << "NEEF: " << (cleanJet_NEEF)[i] << endl;
+        cout << "CEEF: " << (cleanJet_CEEF)[i] << endl;
+        cout << "MUEF: " << (cleanJet_MUEF)[i] << endl;
+    }
+}
+return true;
+'''
+
+muPtCut = '''
+cout << "test filter" << endl;
+if(Min(_lPt) < 6.) {
+cout << "* low pt mu *" << endl;
+cout << "mu pt: " << Min(_lPt) << endl;
+}
+elif(EventToPrint < 100 ) {
+cout << "* new event *" << endl;
+cout << "mu pt: " << Min(_lPt) << endl;
+EventToPrint++;
+}
+return true;
+'''
 
 def SinglePhotonSelection(df):
     '''
@@ -103,22 +167,22 @@ def SinglePhotonSelection(df):
     df = df.Filter('HLT_Photon110EB_TightID_TightIso')
     df = df.Define('photonsptgt20','_phPt>20')
     df = df.Filter('Sum(photonsptgt20)==1','=1 photon with p_{T}>20 GeV')
-    
+
     df = df.Define('isRefPhoton','_phPassTightID&&_phPassIso&&_phPt>115&&abs(_phEta)<1.479')
     df = df.Filter('Sum(isRefPhoton)==1','Photon has p_{T}>115 GeV, passes tight ID and is in EB')
-    
+
     df = df.Define('cleanPh_Pt','_phPt[isRefPhoton]')
     df = df.Define('cleanPh_Eta','_phEta[isRefPhoton]')
     df = df.Define('cleanPh_Phi','_phPhi[isRefPhoton]')
-    
+
     df = df.Define('ref_Pt','cleanPh_Pt[0]')
     df = df.Define('ref_Phi','cleanPh_Phi[0]')
-    
+
     return df
-    
-    
-    
-    
+
+
+
+
 def MuonJet_MuonSelection(df):
     '''
     Select events with >= 1 muon with pT>25 GeV.
@@ -130,8 +194,8 @@ def MuonJet_MuonSelection(df):
     df = df.Define('badmuonPt10','_lPt>10&&abs(_lpdgId)==13&&_lPassTightID==0')
     df = df.Filter('Sum(badmuonPt10)==0','No bad quality muon')
     return df
-    
-    
+
+
 
 def ZEE_EleSelection(df):
     df = df.Filter('HLT_Ele32_WPTight_Gsf')
@@ -144,7 +208,7 @@ def ZEE_EleSelection(df):
     df = df.Define('probe_Pt','_lPt[isProbe]')
     df = df.Define('probe_Eta','_lEta[isProbe]')
     df = df.Define('probe_Phi','_lPhi[isProbe]')
-    
+
     return df
 
 
@@ -153,6 +217,13 @@ def ZMuMu_MuSelection(df):
 
     df = df.Define('isTag','_lPt>25&&abs(_lpdgId)==13&&_lPassTightID&&_lpassHLT_IsoMu24')
     df = df.Filter('Sum(isTag)>0')
+
+    # debug
+    #print("before test filter")
+    #df = df.Filter(muPtCut)
+    #df.Display('_lPt')
+    #print("after test filter")
+
     #df = df.Define('isProbe','_lPt>5&&abs(_lpdgId)==13&&_lPassTightID&& (Sum(isTag)>=2|| isTag==0)')
     df = df.Define('isProbe','_lPt>3&&abs(_lpdgId)==13&&_lPassTightID&& (Sum(isTag)>=2|| isTag==0)')
     df = df.Filter('_mll>80&&_mll<100')
@@ -167,7 +238,7 @@ def ZMuMu_MuSelection(df):
 
 
 
-    
+
 
 def makehistosforturnons_inprobeetaranges(df, histos, etavarname, phivarname, ptvarname, responsevarname, etabins, l1varname, l1thresholds, prefix, binning, l1thresholdforeffvsrunnb, offlinethresholdforeffvsrunnb, nbbins, runmin, runmax):
     '''Make histos for turnons vs pt (1D histos for numerator and denominator) in ranges of eta
@@ -190,6 +261,12 @@ def makehistosforturnons_inprobeetaranges(df, histos, etavarname, phivarname, pt
 
         if i ==1 and prefix == 'EGNonIso_plots':
             df_etarange = df_etarange.Filter(stringToPrint)
+
+        # print jet infos
+        #if prefix == 'Jet_plots':
+        #if i == 0 and prefix == 'Jet_plots_eta_inclusive':
+        #    df_etarange= df_etarange.Filter(printJets)
+
         #Numerator/denominator for plateau eff vs runnb
         df_etarange = df_etarange.Define('inplateau','{}>={}&&inEtaRange'.format(ptvarname,offlinethresholdforeffvsrunnb))
         df_etarange = df_etarange.Define('N_inplateau','Sum(inplateau)')
@@ -482,12 +559,20 @@ def ZMuMu_Plots(df, nbbins, runmin, runmax):
 
 def CleanJets(df):
     #List of cleaned jets (noise cleaning + lepton/photon overlap removal)
-    df = df.Define('isCleanJet','_jetPassID&&_jetLeptonPhotonCleaned&&_jetPt>30')
+    #df = df.Define('isCleanJet','_jetPassID&&_jetLeptonPhotonCleaned&&_jetPt>30')
+    df = df.Define('isCleanJet','_jetPassID&&_jetLeptonPhotonCleaned&&_jetPt>30&&_jet_MUEF<0.5&&_jet_CEEF<0.5')
     df = df.Define('cleanJet_Pt','_jetPt[isCleanJet]')
     df = df.Define('cleanJet_Eta','_jetEta[isCleanJet]')
     df = df.Define('cleanJet_Phi','_jetPhi[isCleanJet]')
     
     df = df.Filter('Sum(isCleanJet)>=1','>=1 clean jet with p_{T}>30 GeV')
+
+    # debug
+    df = df.Define('cleanJet_CHEF', '_jet_CHEF[isCleanJet]')
+    df = df.Define('cleanJet_NHEF', '_jet_NHEF[isCleanJet]')
+    df = df.Define('cleanJet_NEEF', '_jet_NEEF[isCleanJet]')
+    df = df.Define('cleanJet_CEEF', '_jet_CEEF[isCleanJet]')
+    df = df.Define('cleanJet_MUEF', '_jet_MUEF[isCleanJet]')
 
     return df
 
@@ -533,15 +618,41 @@ def EtSum(df):
 def AnalyzeCleanJets(df, JetRecoPtCut, L1JetPtCut, nbbins, runmin, runmax):    
     histos = {}
     #Find L1 jets matched to the offline jet
-    df = df.Define('cleanJet_idxL1jet','FindL1ObjIdx(_L1jet_eta, _L1jet_phi, cleanJet_Eta, cleanJet_Phi)')
+    #df = df.Define('cleanJet_idxL1jet','FindL1ObjIdx(_L1jet_eta, _L1jet_phi, cleanJet_Eta, cleanJet_Phi)')
+
+    # only take jets in bx 0
+    df = df.Define(
+            'cleanJet_idxL1jet',
+            'FindL1ObjIdx_setBx(_L1jet_eta, _L1jet_phi, _L1jet_bx, cleanJet_Eta, cleanJet_Phi, 0)',
+            )
     df = df.Define('cleanJet_L1Pt','GetVal(cleanJet_idxL1jet,_L1jet_pt)')
     df = df.Define('cleanJet_L1Bx','GetVal(cleanJet_idxL1jet,_L1jet_bx)')
     df = df.Define('cleanJet_L1PtoverRecoPt','cleanJet_L1Pt/cleanJet_Pt')
+
+    # print jet infos
+    df = df.Filter(printJets)
+
     #Now some plotting (turn ons for now)
     L1PtCuts = [30., 40., 60., 80., 100., 120., 140., 160., 180., 200.]
 
+    df = makehistosforturnons_inprobeetaranges(df, histos,
+            etavarname='cleanJet_Eta', phivarname='cleanJet_Phi',
+            ptvarname='cleanJet_Pt', responsevarname='cleanJet_L1PtoverRecoPt',
+            etabins=jetEtaBins, l1varname='cleanJet_L1Pt',
+            l1thresholds=L1PtCuts, prefix="Jet_plots", binning=jetmetpt_bins,
+            l1thresholdforeffvsrunnb = L1JetPtCut,
+            offlinethresholdforeffvsrunnb = JetRecoPtCut , nbbins = nbbins,
+            runmin = runmin, runmax = runmax)
 
-    df = makehistosforturnons_inprobeetaranges(df, histos, etavarname='cleanJet_Eta', phivarname='cleanJet_Phi', ptvarname='cleanJet_Pt', responsevarname='cleanJet_L1PtoverRecoPt', etabins=jetEtaBins, l1varname='cleanJet_L1Pt', l1thresholds=L1PtCuts, prefix="Jet_plots", binning=jetmetpt_bins, l1thresholdforeffvsrunnb = L1JetPtCut, offlinethresholdforeffvsrunnb = JetRecoPtCut , nbbins = nbbins, runmin = runmin, runmax = runmax)
+    # histo for dp note
+    df = makehistosforturnons_inprobeetaranges(df, histos,
+            etavarname='cleanJet_Eta', phivarname='cleanJet_Phi',
+            ptvarname='cleanJet_Pt', responsevarname='cleanJet_L1PtoverRecoPt',
+            etabins=[0., 5.], l1varname='cleanJet_L1Pt',
+            l1thresholds=[40., 180.], prefix="Jet_plots_eta_inclusive", binning=jetmetpt_bins,
+            l1thresholdforeffvsrunnb = L1JetPtCut,
+            offlinethresholdforeffvsrunnb = JetRecoPtCut , nbbins = nbbins,
+            runmin = runmin, runmax = runmax)
 
     '''
     for i in range(len(jetEtaBins)-1):
@@ -594,6 +705,10 @@ def AnalyzeCleanJets(df, JetRecoPtCut, L1JetPtCut, nbbins, runmin, runmax):
     histos['L1Jet100to150_bx0_eta'] = df.Histo1D(ROOT.RDF.TH1DModel('L1Jet100to150_bx0_eta', '', 100, -5, 5), 'probeL1Jet100to150Bx0_Eta')
     histos['L1Jet100to150_bxplus1_eta'] = df.Histo1D(ROOT.RDF.TH1DModel('L1Jet100to150_bxplus1_eta', '', 100, -5, 5), 'probeL1Jet100to150Bxplus1_Eta')
 
+    # debug high pt jets
+    #df = df.Define('debugHighPtJet_Pt','cleanJet_Pt[cleanJet_Pt>400.&&abs(cleanJet_Eta)<2.5]')
+    #df = df.Define('debugHighPtJet_Eta','cleanJet_Eta[cleanJet_Pt>400.&&abs(cleanJet_Eta)<2.5]')
+    #df = df.Define('debugHighPtJet_Phi','cleanJet_Phi[cleanJet_Pt>400.&&abs(cleanJet_Eta)<2.5]')
 
     return df, histos
 

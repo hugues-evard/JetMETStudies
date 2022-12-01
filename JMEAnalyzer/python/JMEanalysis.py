@@ -13,7 +13,7 @@ TheSkim = "L1Study"
 TheSkim = "L1Study_ZToMuMu"
 #TheSkim = "L1Study_ZToEE"
 #TheSkim = "L1Study_SingleMuforJME"
-TheSkim = "L1Studies_EphemeralHLTPhysics"
+#TheSkim = "L1Studies_EphemeralHLTPhysics"
 #TheSkim = "L1Study_SinglePhotonforJME"
 ReclusterCHSJets = False
 ReclusterGenJets = False
@@ -29,15 +29,23 @@ runEra="DataRun3"
 =======
 '''
 
+
 import FWCore.ParameterSet.VarParsing as VarParsing
 options = VarParsing.VarParsing ('analysis')
-options.register('runEra', 'DataRun3', VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.string, "run era")
-options.register('TheSkim', '', VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.string, "skim")
+
+#options.register('runEra', 'DataRun3', VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.string, "run era")
+#options.register('TheSkim', 'L1Study_ZToMuMu', VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.string, "skim")
+#options.inputFiles = '/store/data/Run2022C/Muon/MINIAOD/PromptReco-v1/000/356/576/00000/61b5ef5b-6dd7-4cb7-b41f-fd2fd6c2486f.root'
+#options.runEra = 'DataRun3'
+
+options.register('runEra', 'DataUL2018D', VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.string, "run era")
+options.register('TheSkim', 'L1Study_ZToMuMu', VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.string, "skim")
+options.inputFiles = '/store/data/Run2018D/DoubleMuon/MINIAOD/UL2018_MiniAODv2-v1/260000/00DF17BA-B249-6A48-9C25-EBFF27302C97.root'
+options.runEra = 'DataUL2018D'
 
 
 options.outputFile = 'output.root'
-options.inputFiles = 'file1.root', 'file2.root'
-options.runEra = 'DataRun3'
+#options.inputFiles = 'file1.root', 'file2.root'
 options.maxEvents = -1
 options.parseArguments()
 
@@ -81,7 +89,6 @@ lines = []
 
 process.source = cms.Source("PoolSource",
                                 fileNames = cms.untracked.vstring(
-
                                     options.inputFiles
 #'file:'
 #'/store/mc/Run3Winter22MiniAOD/TTToSemiLeptonic_TuneCP5_13p6TeV-powheg-pythia8/MINIAODSIM/PUForMUOVal_122X_mcRun3_2021_realistic_v9-v2/2830000/1f1937c4-c277-4ee0-9a54-9e4f87d9be2f.root'
@@ -181,7 +188,7 @@ process.source = cms.Source("PoolSource",
 #'/store/mc/RunIISummer20UL18MiniAODv2/QCD_bEnriched_HT2000toInf_TuneCP5_13TeV-madgraph-pythia8/MINIAODSIM/106X_upgrade2018_realistic_v16_L1v1-v1/110000/C46792AE-B560-3541-B67A-DD73050C49A8.root'
 #'/store/data/Run2018A/SingleMuon/MINIAOD/UL2018_MiniAODv2-v3/2530000/07C10A10-6C29-AA46-B465-4FADE04566C4.root'
 #'/store/data/Run2022E/Muon/MINIAOD/PromptReco-v1/000/359/286/00000/7a50e5aa-a891-4159-acc4-30fc2c477b90.root'
-'/store/data/Run2022E/Muon/MINIAOD/PromptReco-v1/000/359/286/00000/52875029-4950-4ef8-88b5-3e64308a65d1.root'
+#'/store/data/Run2022E/Muon/MINIAOD/PromptReco-v1/000/359/286/00000/52875029-4950-4ef8-88b5-3e64308a65d1.root'
 #'/store/data/Run2018D/DoubleMuon/MINIAOD/UL2018_MiniAODv2-v1/270002/152AABA5-91A3-9F4B-82BE-654A96DEAE98.root'
 #Data
 #'/store/data/Run2017F/DoubleMuon/MINIAOD/09Aug2019_UL2017-v1/270000/527C5A3A-7C09-4F42-B9DA-A84871504EBF.root'
@@ -462,6 +469,7 @@ process.jmeanalyzer = cms.EDAnalyzer('JMEAnalyzer',
 #                                     Skim=cms.string("L1Unprefirable"),
 #                                     Skim=cms.string("HighHT"),
                                      Debug=cms.bool(False)
+                                     #Debug=cms.bool(True)
                               )
 
 
@@ -633,7 +641,8 @@ if "Data2016" in runEra or "DataUL2016" in runEra:
 if "DataRun3" in runEra:
     #JSONfile = 'Cert_Collisions2022_355100_357900_Golden.json' 
     #JSONfile = 'Cert_Collisions2016to2022_273158_357900_Golden.json' 
-    JSONfile = 'Cert_Collisions2022_355100_360491_Golden.json' 
+    #JSONfile = 'Cert_Collisions2022_355100_360491_Golden.json' 
+    JSONfile = 'Cert_Collisions2022_355100_361580_Golden.json' 
     #JSONfile = 'Cert_271036-284044_13TeV_ReReco_07Aug2017_Collisions16_JSON.txt'
 
 myLumis = LumiList.LumiList(filename = JSONfile).getCMSSWString().split(',')
@@ -1073,6 +1082,3 @@ if ISMC and ReclusterGenJets:
 
 #This one obviously shouldn't be commented out
 process.endpath = cms.EndPath( process.jmeanalyzer  )
-
-
-
