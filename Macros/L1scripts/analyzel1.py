@@ -9,6 +9,7 @@ import argparse
 
 #In case you want to load an helper for C++ functions
 ROOT.gInterpreter.Declare('#include "Helper.h"')
+ROOT.gInterpreter.Declare('#include "Helper_InvariantMass.h"')
 #Importing stuff from other python files
 from helper import * 
 
@@ -63,9 +64,11 @@ def main():
     df = df.Range(0, maxEvents)
     #Next line to monitor event loop progress
     df = df.Filter('if(tdfentry_ %100000 == 0) {cout << "Event is  " << tdfentry_ << endl;} return true;')
+    #df = df.Filter('if(tdfentry_ %10000 == 0) {cout << "Event is  " << tdfentry_ << endl;} return true;')
 
     df = df.Filter('Flag_HBHENoiseFilter&&Flag_HBHENoiseIsoFilter&&Flag_goodVertices&&Flag_EcalDeadCellTriggerPrimitiveFilter&&Flag_BadPFMuonFilter&&Flag_BadPFMuonDzFilter')
 
+    
     nbbins, runmin, runmax = RunNbLimits(df)
 
     # print number of unprefirable

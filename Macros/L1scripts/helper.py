@@ -1,12 +1,27 @@
 import ROOT
 from array import array
+
 jetEtaBins = [0., 1.3, 2.5, 3., 3.5, 4., 5.]
 egEtaBins = [0., 1.479, 2.5]
 muEtaBins = [0., 0.83, 1.24, 2.4]
 
-
 ht_bins = array('f', [ i*10 for i in range(50) ] + [ 500+ i*20 for i in range(25) ] + [1000 + i*50 for i in range(10)] +[1500,1600,1700,1800,2000,2500,3000])
-leptonpt_bins = array('f',[ i for i in range(50) ] + [ 50+2*i for i in range(10) ] + [ 70+3*i for i in range(10) ] + [100+10*i for i in range(10) ] + [200, 250, 300, 400, 500])
+#leptonpt_bins = array('f',[ i for i in range(50) ] + [ 50+2*i for i in range(10) ] + [ 70+3*i for i in range(10) ] + [100+10*i for i in range(10) ] + [200, 250, 300, 400, 500])
+#leptonpt_bins = array('f',[ i * .5 for i in range(50 * 2) ] + [ 50+2*i for i in range(10) ] + [ 70+3*i for i in range(10) ] + [100+10*i for i in range(10) ] + [200, 250, 300, 400, 500])
+leptonpt_bins = array('f',[i * .2 for i in range(15 * 5)] + [ 15 + i * .5 for i in range(5 * 2)] + [20 + i for i in range(30)] + [ 50+2*i for i in range(10) ] + [ 70+3*i for i in range(10) ] + [100+10*i for i in range(10) ] + [200, 250, 300, 400, 500])
+"""
+array('f', [
+     0.0,  1.0,  2.0,  3.0,  4.0,  5.0,  6.0,  7.0,  8.0,  9.0,
+    10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0,
+    20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0,
+    30.0, 31.0, 32.0, 33.0, 34.0, 35.0, 36.0, 37.0, 38.0, 39.0,
+    40.0, 41.0, 42.0, 43.0, 44.0, 45.0, 46.0, 47.0, 48.0, 49.0,
+    50.0, 52.0, 54.0, 56.0, 58.0, 60.0, 62.0, 64.0, 66.0, 68.0,
+    70.0, 73.0, 76.0, 79.0, 82.0, 85.0, 88.0, 91.0, 94.0, 97.0,
+    100.0, 110.0, 120.0, 130.0, 140.0, 150.0, 160.0, 170.0, 180.0, 190.0,
+    200.0, 250.0, 300.0, 400.0, 500.0])
+"""
+
 jetmetpt_bins = array('f',[ i*5 for i in range(50) ] +  [250+10*i for i in range(25) ]  + [500+20*i for i in range(10) ] + [700, 800, 900, 1000, 1200, 1500, 2000 ])
 #String printing stuff for a few events
 stringToPrint = '''
@@ -144,6 +159,29 @@ for(unsigned int i = 0; i < (cleanJet_Pt).size(); i++){
 return true;
 '''
 
+printHighMET = '''
+if(_met > 1200){
+    cout << "*** High MET event ***" << endl;
+    cout << "runNb: " << _runNb<<endl;
+    cout << "eventNb: " << _eventNb <<endl;
+    cout << "lumiBlock: " << _lumiBlock <<endl;
+    cout << "MET: " << _met << endl;
+    cout << "nb of jets: " << (_jetPt).size() << endl;
+    for(unsigned int i = 0; i < (_jetPt).size(); i++){
+        cout << "*** Jet #" << i << " ***" << endl;
+        cout << "pT: " << (_jetPt)[i] << endl;
+        cout << "eta: " << (_jetEta)[i] << endl;
+        cout << "phi: " << (_jetPhi)[i] << endl;
+        cout << "CHEF: " << (_jet_CHEF)[i] << endl;
+        cout << "NHEF: " << (_jet_NHEF)[i] << endl;
+        cout << "NEEF: " << (_jet_NEEF)[i] << endl;
+        cout << "CEEF: " << (_jet_CEEF)[i] << endl;
+        cout << "MUEF: " << (_jet_MUEF)[i] << endl;
+    }
+}
+return true;
+'''
+
 muPtCut = '''
 cout << "test filter" << endl;
 if(Min(_lPt) < 6.) {
@@ -158,6 +196,14 @@ EventToPrint++;
 return true;
 '''
 
+highEnergyJet = '''
+for( unsigned int i = 0; i < (_jetPt).size(); i++){
+    if(_jetPt[i] * cosh(_jetEta[i]) > 6000){
+        return false;
+    }
+}
+return true;
+'''
 def SinglePhotonSelection(df):
     '''
     Select events with exactly one photon with pT>20 GeV.
@@ -193,6 +239,9 @@ def MuonJet_MuonSelection(df):
     df = df.Filter('Sum(goodmuonPt25)>=1','>=1 muon with p_{T}>25 GeV')
     df = df.Define('badmuonPt10','_lPt>10&&abs(_lpdgId)==13&&_lPassTightID==0')
     df = df.Filter('Sum(badmuonPt10)==0','No bad quality muon')
+
+    # reject events containing a jet with energy > 6000 GeV
+    df = df.Filter(highEnergyJet, 'No high energy jet')
     return df
 
 
@@ -561,6 +610,7 @@ def CleanJets(df):
     #List of cleaned jets (noise cleaning + lepton/photon overlap removal)
     #df = df.Define('isCleanJet','_jetPassID&&_jetLeptonPhotonCleaned&&_jetPt>30')
     df = df.Define('isCleanJet','_jetPassID&&_jetLeptonPhotonCleaned&&_jetPt>30&&_jet_MUEF<0.5&&_jet_CEEF<0.5')
+    #df = df.Define('isCleanJet','_jetPassID&&_jetLeptonPhotonCleaned&&_jetPt>30&&_jet_MUEF<0.5&&_jet_CEEF<0.5&&((_jetPt * cosh(_jetEta)) < 6000)')
     df = df.Define('cleanJet_Pt','_jetPt[isCleanJet]')
     df = df.Define('cleanJet_Eta','_jetEta[isCleanJet]')
     df = df.Define('cleanJet_Phi','_jetPhi[isCleanJet]')
@@ -568,11 +618,11 @@ def CleanJets(df):
     df = df.Filter('Sum(isCleanJet)>=1','>=1 clean jet with p_{T}>30 GeV')
 
     # debug
-    df = df.Define('cleanJet_CHEF', '_jet_CHEF[isCleanJet]')
-    df = df.Define('cleanJet_NHEF', '_jet_NHEF[isCleanJet]')
-    df = df.Define('cleanJet_NEEF', '_jet_NEEF[isCleanJet]')
-    df = df.Define('cleanJet_CEEF', '_jet_CEEF[isCleanJet]')
-    df = df.Define('cleanJet_MUEF', '_jet_MUEF[isCleanJet]')
+    #df = df.Define('cleanJet_CHEF', '_jet_CHEF[isCleanJet]')
+    #df = df.Define('cleanJet_NHEF', '_jet_NHEF[isCleanJet]')
+    #df = df.Define('cleanJet_NEEF', '_jet_NEEF[isCleanJet]')
+    #df = df.Define('cleanJet_CEEF', '_jet_CEEF[isCleanJet]')
+    #df = df.Define('cleanJet_MUEF', '_jet_MUEF[isCleanJet]')
 
     return df
 
@@ -594,6 +644,26 @@ def EtSum(df):
     df = df.Define('L1_ETMHF90','passL1_Initial_bx0[420]')
     df = df.Define('L1_ETMHF100','passL1_Initial_bx0[421]')
 
+    df = df.Define('hastwocleanjets', 'PassDiJet80_40_Mjj500(cleanJet_Pt, cleanJet_Eta, cleanJet_Phi)')
+    #df = df.Define('enriched_MetNoMu', 'MetNoMu[hastwocleanjets]')
+
+    # debug print
+    #df.Describe().Print()
+    #print("isCleanJet: {}, _jetPt: {}, cleanJet_Pt: {}, hastwocleanjets: {}, MetNoMu: {}".format(
+    #    df.GetColumnType("isCleanJet"),
+    #    df.GetColumnType("_jetPt"),
+    #    df.GetColumnType("cleanJet_Pt"),
+    #    df.GetColumnType("hastwocleanjets"),
+    #    df.GetColumnType("MetNoMu")))
+    #print_df1 = df.Display({'cleanJet_Pt', 'cleanJet_Eta', 'cleanJet_Phi', 'hastwocleanjets', 'MetNoMu'})
+    #print_df1.Print()
+
+    #print_df2 = df.Display({'hastwocleanjets', 'MetNoMu', 'enriched_MetNoMu'})
+    #print_df2.Print()
+
+    # debug print
+    #df = df.Filter(printHighMET)
+
     histos['h_MetNoMu_Denominator'] = df.Histo1D(ROOT.RDF.TH1DModel('h_MetNoMu_Denominator', '', len(jetmetpt_bins)-1, array('d',jetmetpt_bins)), 'MetNoMu') 
     
     dfmetl1 = df.Filter('passL1_Initial_bx0[419]')
@@ -613,6 +683,42 @@ def EtSum(df):
     histos['L1_HTT360er'] = df.Filter('passL1_Initial_bx0[404]').Filter('_met<50').Histo1D(ROOT.RDF.TH1DModel('h_HT_L1_HTT360er', '', len(ht_bins)-1, array('d',ht_bins)), 'HT')
     histos['HLT_PFHT1050'] =  df.Filter('HLT_PFHT1050').Filter('_met<50').Histo1D(ROOT.RDF.TH1DModel('h_HLT_PFHT1050', '', len(ht_bins)-1, array('d',ht_bins)), 'HT')
 
+
+    # test
+    histos['h_enriched_MetNoMu_Denominator'] = df.Filter('hastwocleanjets').Histo1D(
+            ROOT.RDF.TH1DModel(
+                'h_enriched_MetNoMu_Denominator',
+                '',
+                len(jetmetpt_bins)-1,
+                array('d',jetmetpt_bins)
+                ),
+            'MetNoMu',
+            ) 
+
+    histos['HLT_enriched_PFMETNoMu120_PFMHTNoMu120_IDTight'] = \
+            df.Filter('HLT_PFMETNoMu120_PFMHTNoMu120_IDTight&&hastwocleanjets')\
+            .Histo1D(
+                    ROOT.RDF.TH1DModel(
+                        'h_enriched_HLT_PFMETNoMu120_PFMHTNoMu120_IDTight',
+                        '',
+                        len(jetmetpt_bins)-1,
+                        array('d',jetmetpt_bins)
+                        ),
+                    'MetNoMu',
+                    )
+
+    histos['HLT_enriched_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60'] = \
+            df.Filter('HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60&&hastwocleanjets')\
+            .Histo1D(
+                    ROOT.RDF.TH1DModel(
+                        'h_enriched_HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60',
+                        '',
+                        len(jetmetpt_bins)-1,
+                        array('d',jetmetpt_bins),
+                        ),
+                    'MetNoMu',
+                    )
+
     return df, histos
 
 def AnalyzeCleanJets(df, JetRecoPtCut, L1JetPtCut, nbbins, runmin, runmax):    
@@ -630,7 +736,7 @@ def AnalyzeCleanJets(df, JetRecoPtCut, L1JetPtCut, nbbins, runmin, runmax):
     df = df.Define('cleanJet_L1PtoverRecoPt','cleanJet_L1Pt/cleanJet_Pt')
 
     # print jet infos
-    df = df.Filter(printJets)
+    #df = df.Filter(printJets)
 
     #Now some plotting (turn ons for now)
     L1PtCuts = [30., 40., 60., 80., 100., 120., 140., 160., 180., 200.]
@@ -791,6 +897,7 @@ def AnalyzePtBalance(df, nbbins, runmin, runmax):
 def RunNbLimits(df):
     runNb_max = df.Max("_runNb").GetValue() + 1
     runNb_min = df.Min("_runNb").GetValue() - 1
+    #runNb_min = runNb_max - 1
     nb_bins = int(runNb_max - runNb_min)
     #print(nb_bins, runNb_min, runNb_max)
     #quit()

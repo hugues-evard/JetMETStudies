@@ -3,3 +3,10 @@ Macros/L1scripts/MC
 JMEAnalyzer/python/crabworkarea_*
 **/__pycache__/
 **/*.root
+Macros/L1scripts/2022*/
+Macros/L1scripts/2018D/
+Macros/L1scripts/MonteCarlo/
+Macros/L1scripts/old_2022RunEv1/
+Macros/L1scripts/runNbgeq359924/
+Macros/L1scripts/*.txt
+Macros/L1scripts/test*
